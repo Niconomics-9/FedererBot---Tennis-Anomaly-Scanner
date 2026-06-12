@@ -84,9 +84,16 @@ _TENNIS_SERIES = [
 
 class KalshiProvider(BaseProvider):
 
+    # Kalshi's basic tier allows ~10 requests/second; GitHub Actions runners
+    # are fast enough to exceed that, so every request is paced and 429s are
+    # retried with backoff instead of dropping the series/event.
+    _MIN_REQUEST_INTERVAL = 0.15
+    _MAX_ATTEMPTS = 4
+
     def __init__(self) -> None:
         self._key_id = settings.KALSHI_KEY_ID
         self._private_key = self._load_private_key()
+        self._last_request = 0.0
 
     @property
     def name(self) -> str:
@@ -135,6 +142,31 @@ class KalshiProvider(BaseProvider):
 
     # ── internal ─────────────────────────────────────────────────────────────
 
+    def _get(self, path: str, params: dict) -> dict:
+        """Signed GET against the v2 API with pacing and 429 retry/backoff."""
+        for attempt in range(self._MAX_ATTEMPTS):
+            wait = self._MIN_REQUEST_INTERVAL - (time.monotonic() - self._last_request)
+            if wait > 0:
+                time.sleep(wait)
+            self._last_request = time.monotonic()
+            resp = requests.get(
+                f"{_BASE}{path}",
+                params=params,
+                headers=self._signed_headers("GET", f"/trade-api/v2{path}"),
+                timeout=15,
+            )
+            if resp.status_code == 429 and attempt < self._MAX_ATTEMPTS - 1:
+                try:
+                    delay = float(resp.headers.get("Retry-After", ""))
+                except ValueError:
+                    delay = float(2 ** attempt)
+                logger.warning("[kalshi] 429 rate-limited, retrying in %.1fs", delay)
+                time.sleep(delay)
+                continue
+            resp.raise_for_status()
+            return resp.json()
+        raise requests.RequestException("unreachable")  # loop always returns/raises
+
     def _fetch_tennis_markets(self) -> list[dict]:
         """
         Two-stage fetch:
@@ -144,8 +176,6 @@ class KalshiProvider(BaseProvider):
         call to /markets?event_ticker=X is required.
         """
         tennis: list[dict] = []
-        events_path = "/trade-api/v2/events"
-        markets_path = "/trade-api/v2/markets"
 
         for series_ticker in _TENNIS_SERIES:
             # Stage 1: collect event tickers
@@ -156,17 +186,13 @@ class KalshiProvider(BaseProvider):
                 if cursor:
                     params["cursor"] = cursor
                 try:
-                    resp = requests.get(
-                        f"{_BASE}/events",
-                        params=params,
-                        headers=self._signed_headers("GET", events_path),
-                        timeout=15,
-                    )
-                    if resp.status_code == 401:
+                    data = self._get("/events", params)
+                except requests.HTTPError as exc:
+                    if exc.response is not None and exc.response.status_code == 401:
                         logger.error("[kalshi] Authentication failed (401). Check key ID and private key.")
                         return tennis
-                    resp.raise_for_status()
-                    data = resp.json()
+                    logger.error("[kalshi] HTTP error fetching events for %s: %s", series_ticker, exc)
+                    break
                 except requests.RequestException as exc:
                     logger.error("[kalshi] HTTP error fetching events for %s: %s", series_ticker, exc)
                     break
@@ -185,14 +211,7 @@ class KalshiProvider(BaseProvider):
                     if ecursor:
                         eparams["cursor"] = ecursor
                     try:
-                        eresp = requests.get(
-                            f"{_BASE}/markets",
-                            params=eparams,
-                            headers=self._signed_headers("GET", markets_path),
-                            timeout=15,
-                        )
-                        eresp.raise_for_status()
-                        edata = eresp.json()
+                        edata = self._get("/markets", eparams)
                     except requests.RequestException as exc:
                         logger.error("[kalshi] HTTP error fetching markets for event %s: %s", event_ticker, exc)
                         break
