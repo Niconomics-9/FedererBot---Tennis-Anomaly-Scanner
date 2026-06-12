@@ -1,0 +1,16 @@
+# ── secrets — NEVER commit ─────────────────────────────────────────────────────
+.env
+.env - Copy.example
+*.pem
+
+# ── local data & logs (DB persists via the Actions cache, not git) ────────────
+*.db
+*.db-shm
+*.db-wal
+*.log
+
+# ── python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+.venv/
+.runtime_deps/

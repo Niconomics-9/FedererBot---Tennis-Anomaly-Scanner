@@ -1,0 +1,75 @@
+# Scanner — runs a short scan burst every ~10 minutes.
+#
+# Each job restores the SQLite database from the Actions cache, runs
+# MAX_SCAN_CYCLES poll cycles (2 cycles, 120 s apart ≈ 6-8 min including
+# fetch time), then saves the database back to the cache. The schedule
+# provides the long-running cadence; GitHub may delay scheduled runs by a
+# few minutes under load, which is acceptable — the backtest shows waves
+# develop over hours, not minutes.
+#
+# Secrets required (repo Settings → Secrets and variables → Actions):
+#   DISCORD_WEBHOOK_URL      from .env
+#   KALSHI_KEY_ID            from .env
+#   KALSHI_PRIVATE_KEY_PEM   full contents of kalshi_private_key.pem
+
+name: Scanner
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: scanner
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Restore market database
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            tennis_scanner.db
+            tennis_scanner.db-wal
+            tennis_scanner.db-shm
+          key: db-${{ github.run_id }}
+          restore-keys: db-
+
+      - name: Write Kalshi private key
+        env:
+          KALSHI_PEM: ${{ secrets.KALSHI_PRIVATE_KEY_PEM }}
+        run: printf '%s\n' "$KALSHI_PEM" > kalshi_private_key.pem
+
+      - name: Run scan burst
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
+          # mirror of local .env values that differ from settings.py defaults
+          POLL_SECONDS: "120"
+          NEW_LOW_THRESHOLD: "0.10"
+          # Actions-specific: burst mode + bounded DB for the cache
+          MAX_SCAN_CYCLES: "2"
+          SNAPSHOT_RETENTION_DAYS: "7"
+        run: python main.py
+
+      - name: Save market database
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            tennis_scanner.db
+            tennis_scanner.db-wal
+            tennis_scanner.db-shm
+          key: db-${{ github.run_id }}

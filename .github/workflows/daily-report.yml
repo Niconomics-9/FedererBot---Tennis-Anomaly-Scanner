@@ -1,0 +1,67 @@
+# Daily report — same routine as the local "TennisBot Daily Report" task.
+#
+# Restores the database from the Actions cache, runs the three read-only
+# analyzers via run_daily_report.py, commits the dated report + match_waves
+# CSV to the repo (readable from anywhere), and uploads a gzipped database
+# backup as a 30-day artifact in case the cache is ever evicted.
+#
+# The daily commit also keeps the repository "active", which prevents GitHub
+# from auto-disabling scheduled workflows after 60 days without activity.
+
+name: Daily report
+
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 9:00 AM EDT / 8:00 AM EST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Restore market database
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            tennis_scanner.db
+            tennis_scanner.db-wal
+            tennis_scanner.db-shm
+          key: db-report-${{ github.run_id }}
+          restore-keys: db-
+
+      - name: Generate reports
+        run: python run_daily_report.py
+
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git diff --cached --quiet || git commit -m "Daily report $(date -u +%F)"
+          git push
+
+      - name: Back up database
+        run: gzip -kf tennis_scanner.db
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}
+          path: tennis_scanner.db.gz
+          retention-days: 30

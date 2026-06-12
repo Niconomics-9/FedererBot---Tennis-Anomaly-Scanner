@@ -1,0 +1,84 @@
+TennisBot daily report — generated 2026-06-11 11:47 (local)
+
+##############################################################################
+# analyze_alert_outcomes.py
+##############################################################################
+
+======================================================================================
+Alert outcomes by type — forward window 30 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       40    +0.00p   +25.00p   25%   22%    +0.00p   (63 pending)
+FAVORITE_RECOVERY                4    +0.00p   +36.00p   25%   25%    +0.00p
+LOW_ODDS_SPIKE                   9    +0.00p    +6.00p   11%   11%    -1.25p   (3 pending)
+NEW_LOW_WATCH                  158    +0.00p   +56.40p    9%    8%    +0.00p   (71 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Alert outcomes by type — forward window 60 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       40    +0.00p   +25.00p   25%   22%    +0.00p   (63 pending)
+FAVORITE_RECOVERY                3    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+LOW_ODDS_SPIKE                   9    +0.00p   +14.00p   11%   11%    -1.25p   (3 pending)
+NEW_LOW_WATCH                  156    +0.00p   +61.85p   10%    8%    +0.00p   (73 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Alert outcomes by type — forward window 120 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       39    +0.00p   +25.00p   26%   23%    +0.00p   (64 pending)
+FAVORITE_RECOVERY                3    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+LOW_ODDS_SPIKE                   9    +0.00p   +14.00p   22%   22%    +0.00p   (3 pending)
+NEW_LOW_WATCH                  165    +0.00p   +93.50p   10%    9%    +0.00p   (64 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Pre-match vs in-play at alert time — forward window 60 min
+======================================================================================
+phase            n  med peak >=3pp >=5pp   med dip
+pre_match        0
+in_play          0
+unknown        210    +0.00p   12%   11%    +0.00p
+
+[stderr / exit 0]
+C:\Users\ADMIN\Downloads\TennisBot\tennis-odds-alert-bot\analyze_alert_outcomes.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# analyze_pre_spike.py
+##############################################################################
+
+========================================================================
+Score buckets — hit = forward move >= +3 pp within 60 min
+========================================================================
+bucket          n   hits  hit-rate  median mv60   max mv60
+0-40         4863    877      18%       +0.00pp    +86.00pp   (3726 pending)
+40-55         309     77      25%       +0.00pp    +77.50pp   (212 pending)
+55-70          39     11      28%       +0.00pp    +43.00pp   (26 pending)
+70-85           3      0       0%       +0.05pp     +0.95pp   (1 pending)
+85-100          1      0       0%       +0.35pp     +0.35pp
+
+========================================================================
+Component signal — avg points among hits (n=965) vs misses (n=4250)
+========================================================================
+component                            avg hit  avg miss    edge
+cross.kalshi_confirmation               1.59      1.77   -0.18
+external.momentum                       0.00      0.00   +0.00
+low_odds.coiled_turning_up              0.16      0.21   -0.06
+low_odds.in_band                        2.58      6.84   -4.26
+low_odds.recent_new_low                 1.32      3.14   -1.82
+pressure.acceleration_positive          3.62      2.68   +0.94
+pressure.liquidity_rising               1.64      1.49   +0.15
+pressure.spread_tightening              3.44      2.80   +0.63
+pressure.update_freq_rising             4.34      2.76   +1.58
+pressure.velocity_positive              5.13      2.96   +2.17
+pressure.volume_surge                   5.23      2.15   +3.08
+
+[stderr / exit 0]
+C:\Users\ADMIN\Downloads\TennisBot\tennis-odds-alert-bot\analyze_pre_spike.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()

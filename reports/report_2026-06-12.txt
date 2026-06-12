@@ -1,0 +1,148 @@
+TennisBot daily report — generated 2026-06-12 06:49 (local)
+
+##############################################################################
+# analyze_alert_outcomes.py
+##############################################################################
+
+======================================================================================
+Alert outcomes by type — forward window 30 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       40    +0.00p   +25.00p   25%   22%    +0.00p   (63 pending)
+FAVORITE_RECOVERY                5    +0.00p   +36.00p   20%   20%    +0.00p
+LOW_ODDS_SPIKE                   9    +0.00p    +6.00p   11%   11%    -1.25p   (3 pending)
+NEW_LOW_WATCH                  159    +0.00p   +56.40p    9%    8%    +0.00p   (71 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Alert outcomes by type — forward window 60 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       40    +0.00p   +25.00p   25%   22%    +0.00p   (63 pending)
+FAVORITE_RECOVERY                5    +0.00p   +36.00p   20%   20%    +0.00p
+LOW_ODDS_SPIKE                   9    +0.00p   +14.00p   11%   11%    -1.25p   (3 pending)
+NEW_LOW_WATCH                  159    +0.00p   +61.85p    9%    8%    +0.00p   (71 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Alert outcomes by type — forward window 120 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                       40    +0.00p   +25.00p   25%   22%    +0.00p   (63 pending)
+FAVORITE_RECOVERY                5    +0.00p   +36.00p   20%   20%    +0.00p
+LOW_ODDS_SPIKE                  10    +0.00p   +14.00p   20%   20%    -0.62p   (2 pending)
+NEW_LOW_WATCH                  174    +0.00p   +93.50p   11%   10%    +0.00p   (56 pending)
+PRE_SPIKE_CANDIDATE              1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.35p    +0.35p    0%    0%    +0.35p
+
+======================================================================================
+Pre-match vs in-play at alert time — forward window 60 min
+======================================================================================
+phase            n  med peak >=3pp >=5pp   med dip
+pre_match        2    +0.50p    0%    0%    -0.25p
+in_play          0
+unknown        213    +0.00p   13%   11%    +0.00p
+
+[stderr / exit 0]
+C:\Users\ADMIN\Downloads\TennisBot\tennis-odds-alert-bot\analyze_alert_outcomes.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# analyze_pre_spike.py
+##############################################################################
+
+========================================================================
+Score buckets — hit = forward move >= +3 pp within 60 min
+========================================================================
+bucket          n   hits  hit-rate  median mv60   max mv60
+0-40        14074   3058      22%       +0.00pp    +88.50pp   (3462 pending)
+40-55        1014    360      36%       +0.45pp    +86.00pp   (344 pending)
+55-70         123     41      33%       +0.70pp    +47.50pp   (28 pending)
+70-85           4      0       0%       +0.03pp     +0.95pp   (1 pending)
+85-100          1      0       0%       +0.35pp     +0.35pp
+
+========================================================================
+Component signal — avg points among hits (n=3459) vs misses (n=11757)
+========================================================================
+component                            avg hit  avg miss    edge
+cross.kalshi_confirmation               0.94      0.87   +0.07
+external.momentum                       0.00      0.00   +0.00
+low_odds.coiled_turning_up              0.37      0.34   +0.03
+low_odds.in_band                        2.79      4.96   -2.17
+low_odds.recent_new_low                 3.13      3.92   -0.79
+pressure.acceleration_positive          2.58      2.08   +0.51
+pressure.liquidity_rising               1.11      1.12   -0.01
+pressure.spread_tightening              2.26      2.01   +0.25
+pressure.sustained_move                 2.13      1.24   +0.89
+pressure.update_freq_rising             3.11      2.24   +0.88
+pressure.velocity_positive              3.55      2.41   +1.14
+pressure.volume_surge                   4.30      2.05   +2.25
+
+[stderr / exit 0]
+C:\Users\ADMIN\Downloads\TennisBot\tennis-odds-alert-bot\analyze_pre_spike.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# backtest_match_waves.py
+##############################################################################
+
+======================================================================================
+Saved data inventory — snapshots from 2026-06-09T19:27:56.954121 to 2026-06-12T13:47:00.450551 (UTC)
+======================================================================================
+source        snapshots  matches   series
+polymarket      185,020    8,084   10,000
+kalshi           24,398    1,836    2,188
+demo                867        3        3
+alerts sent: 353  |  score_history rows: 19,051
+
+======================================================================================
+Backtest universe — Polymarket match-winner series with a known start time
+======================================================================================
+series found: 263  (completed 210, upcoming 53)
+skipped: 9011 prop/future/unknown series, 726 match-winner series without start time
+completed but insufficient_history: 99
+
+======================================================================================
+Would it have worked? — best pre-match entry->peak move, 111 series
+(worked = wave >= +3 pp; entry >= 10 min before start)
+======================================================================================
+label                       n   share  med wave  med entry lead
+wave_5pp                   19   17.1%   +16.50p          1055m
+wave_3pp                    5    4.5%    +3.50p          1265m
+small_move                 27   24.3%    +1.50p           982m
+flat                       60   54.1%    +0.00p           412m
+
+would have worked: 24/111 series (21.6%) — 24/111 distinct matches (21.6%)
+
+--------------------------------------------------------------------------------------
+By entry band (belief 3: are 12-30% entries pulling their weight?)
+band            n  worked    rate  med wave   med dip
+2-12%           2       0    0.0%    +0.25p    +0.00p
+12-30%         14       4   28.6%    +0.50p    +0.00p
+30-60%         74      20   27.0%    +1.00p    +0.00p
+60%+           21       0    0.0%    +0.00p    +0.00p
+
+--------------------------------------------------------------------------------------
+Wave timing (worked series) — how far before the start do waves begin/peak?
+entry lead: median 1077 min (IQR 777-2398 min before start)
+peak lead: median 886 min (IQR 447-1056 min before start)
+
+--------------------------------------------------------------------------------------
+Did the live bot catch them? (pre-match alerts on this series)
+waves caught: 1/24 (4.2% recall)
+pre-match alerts on completed series: 2, of which on waves: 1 (50.0% precision)
+
+--------------------------------------------------------------------------------------
+watch_score replay — max pre-match PRE_SPIKE score, 71 series with scores
+median max score — waves: 44, non-waves: 30
+threshold sweep (23 wave series have score history; live alert threshold is 70):
+threshold   fired   hit  precision   recall
+>= 30          45    21     46.7%   91.3%
+>= 40          24    15     62.5%   65.2%
+>= 50           5     3     60.0%   13.0%
+>= 60           2     1     50.0%    4.3%
+>= 70           0     0         —    0.0%
+
+Per-series dataset written to C:\Users\ADMIN\Downloads\TennisBot\tennis-odds-alert-bot\reports\match_waves_2026-06-12.csv
