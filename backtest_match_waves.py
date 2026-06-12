@@ -52,7 +52,8 @@ MIN_LEAD_MINUTES = 10          # entry must be at least this far before start
 MIN_PRE_SNAPSHOTS = 5          # fewer pre-match readings -> insufficient_history
 WAVE_WORKED = 0.03             # +3 pp: "would have worked" (LEARNINGS.md bar)
 WAVE_STRONG = 0.05             # +5 pp: the stronger tier
-SCORE_ALERT_THRESHOLD = 70.0   # live PRE_SPIKE alert threshold to replay
+SCORE_ALERT_THRESHOLD = 45.0   # mirrors settings.PRE_SPIKE_ALERT_SCORE (kept
+                               # as a constant: this script must run without .env)
 KEEP_CSVS = 30
 
 ENTRY_BANDS = (
@@ -383,7 +384,7 @@ def _print_summary(results: list[dict], skipped: dict, csv_path: Path) -> None:
           f" ({len(matches_worked) / len(matches_all):.1%})")
 
     print(f"\n{'-' * 86}")
-    print("By entry band (belief 3: are 12-30% entries pulling their weight?)")
+    print("By entry band (belief 3: are 30-60% entries pulling their weight?)")
     print(f"{'band':<10} {'n':>6} {'worked':>7} {'rate':>7} {'med wave':>9} {'med dip':>9}")
     for _, _, name in ENTRY_BANDS:
         rows = [r for r in scored if r.get("entry_band") == name]

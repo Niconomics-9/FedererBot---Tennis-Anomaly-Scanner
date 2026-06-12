@@ -98,6 +98,17 @@ Every cycle, per market: probability, bid/ask, spread, volume, liquidity, veloci
 - ~50/50 new matches produce no alert by design — alerts require low odds, movement, and quality gates.
 - First run after a DB reset is quieter than before because alerts require market classification and minimum history.
 
+## Recent changes (2026-06-12d) — PRE_SPIKE opened up to where waves live
+
+Missed-wave post-mortem (`analyze_missed_waves.py`, now part of the daily
+report): 30 of 31 real pre-match waves produced no alert — 80% were killed
+by the hard 2–30% band gate (waves actually enter at 31–55%, coin-flip
+matches steaming toward a favorite), the rest by the unreachable threshold
+70 (wave scores top out at 64 with the external bucket stubbed). Adopted:
+band cap 0.30 → 0.60, alert score 70 → 45, urgent 80 → 60 (replay over the
+widened universe: ~61% precision / 64% recall, ~9 fires/day). Details and
+caveats in [LEARNINGS.md](LEARNINGS.md).
+
 ## Recent changes (2026-06-12c) — GitHub Actions hosting LIVE
 
 Cutover completed: code pushed to

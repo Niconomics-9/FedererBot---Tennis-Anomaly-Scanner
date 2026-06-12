@@ -13,9 +13,9 @@ Deterministic 0–100 score from four buckets (no ML, no execution):
                                    rising, positive velocity/acceleration,
                                    sustained multi-cycle drift, update
                                    frequency rising
-  2. Band setup             0–25   small eligibility credit (2–30%% band),
-                                   price coiled near its low and turning
-                                   upward, low touched recently
+  2. Band setup             0–25   small eligibility credit (the PRE_SPIKE
+                                   band from settings), price coiled near its
+                                   low and turning upward, low touched recently
   3. Cross-exchange         0–6    equivalent Kalshi market already moving up
                                    (placeholder matching — see cross_exchange)
   4. External momentum      0–10   news / social / schedule context — stub,

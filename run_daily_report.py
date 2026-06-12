@@ -23,6 +23,7 @@ ANALYZERS = (
     "analyze_alert_outcomes.py",
     "analyze_pre_spike.py",
     "backtest_match_waves.py",
+    "analyze_missed_waves.py",   # needs DISCORD_WEBHOOK_URL set (imports settings)
 )
 
 

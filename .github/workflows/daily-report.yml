@@ -47,6 +47,10 @@ jobs:
           restore-keys: db-
 
       - name: Generate reports
+        env:
+          # analyze_missed_waves.py imports config.settings, which requires
+          # the webhook at import time (no message is sent by the analyzers)
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python run_daily_report.py
 
       - name: Commit reports

@@ -2,7 +2,7 @@
 Missed-wave post-mortem — for every pre-match wave the bot did NOT alert on,
 attribute WHY using the saved score trail, in gate order:
 
-  1. never_in_band      no pre-match snapshot inside the PRE_SPIKE 2-30% band
+  1. never_in_band      no pre-match snapshot inside the PRE_SPIKE band
                         -> the hard band gate made an alert impossible
   2. in_band_no_scores  band-eligible at some point but no score_history rows
                         pre-match (score stayed under the history floor)

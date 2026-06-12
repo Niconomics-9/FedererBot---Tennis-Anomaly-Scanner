@@ -113,18 +113,20 @@ ALERT_REQUIRE_START_TIME: bool = _bool("ALERT_REQUIRE_START_TIME", True)
 
 # Eligibility band — alerts only fire for probabilities inside it.
 # Wide on purpose: the target is odds LIKELY TO MOVE, not low odds per se.
-# Below 2% spreads dominate any wave; above 30% the relative payoff of a
-# pre-match move shrinks and mid-range drift is mostly noise.
+# Below 2% spreads dominate any wave. The cap sits at 60% because the
+# 2026-06-12 missed-wave post-mortem found 80% of real waves entered at
+# 31–55% (coin-flip matches steaming toward a favorite) and zero above 60%
+# (LEARNINGS.md, analyze_missed_waves.py).
 PRE_SPIKE_PROB_MIN: float = _float("PRE_SPIKE_PROB_MIN", 0.02)
-PRE_SPIKE_PROB_MAX: float = _float("PRE_SPIKE_PROB_MAX", 0.30)
+PRE_SPIKE_PROB_MAX: float = _float("PRE_SPIKE_PROB_MAX", 0.60)
 
-# Score thresholds (0–100 scale). 70 with the rebalanced weights demands
-# MORE movement evidence than the old 75 did, because band membership now
-# contributes 5 points instead of 15. Realistic max while the external bucket
-# is a stub is 83 (52 pressure + 25 band + 6 cross), so urgent at 80 means
-# "essentially everything is firing, including cross-exchange confirmation".
-PRE_SPIKE_ALERT_SCORE: float = _float("PRE_SPIKE_ALERT_SCORE", 70.0)
-PRE_SPIKE_URGENT_SCORE: float = _float("PRE_SPIKE_URGENT_SCORE", 80.0)
+# Score thresholds (0–100 scale), recalibrated 2026-06-12 by replaying the
+# score trail over the widened band: >= 45 caught 64% of waves at 61.5%
+# precision (~9 fires/day); the old 70 never fired because wave scores top
+# out at 64 while the external bucket is a stub at 0. Urgent at 60 marks
+# the top of the observed wave-score distribution (replay precision 75%).
+PRE_SPIKE_ALERT_SCORE: float = _float("PRE_SPIKE_ALERT_SCORE", 45.0)
+PRE_SPIKE_URGENT_SCORE: float = _float("PRE_SPIKE_URGENT_SCORE", 60.0)
 
 # Dedicated cooldown — one standard alert per market per window; a single
 # escalation to urgent is allowed inside the window if the score crosses

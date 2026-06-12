@@ -113,7 +113,7 @@ low" semantics still make sense for 30–60% entries.
 |---|--------|--------|
 | 1 | In-play swings are unusable for this strategy — by the time a comeback shows in odds, the wave already happened. | Adopted as a hard gate, 2026-06-11 |
 | 2 | Membership in a low-odds band is not evidence a price will move; pressure signals (volume surge, spread tightening, sustained drift, update frequency) are. | Adopted: in_band 15 → 5 pts, sustained_move added at 10 pts |
-| 3 | Pre-match waves are not confined to sub-12% odds; steam/news moves happen across the band. | Adopted: PRE_SPIKE band 2–12% → 2–30%. **Under-corrected** per 2026-06-12 post-mortem: 80% of missed waves entered at 31–55%, above the cap — candidate fix is cap → ~0.60 at the 06-18 review |
+| 3 | Pre-match waves are not confined to sub-12% odds; steam/news moves happen across the band. | Adopted twice: band 2–12% → 2–30% (06-11), then → 2–60% + threshold 70 → 45 (06-12) after the post-mortem showed 80% of missed waves entered at 31–55% |
 | 4 | Sustained multi-cycle drift (velocity_5c) beats single-cycle velocity as a wave precursor, since one tick is often just a repricing. | Untested — check component report after ~1 week |
 | 5 | Alerts need lead time to be actionable; <10 min before start is too late to ride a wave. | Adopted as ALERT_PRE_MATCH_MIN_LEAD_MINUTES=10 |
 | 6 | Cross-exchange (Kalshi twin moving first) is a strong confirm but rarely matches; don't make alerts depend on it. | Unchanged at max 6 pts |
@@ -138,6 +138,27 @@ low" semantics still make sense for 30–60% entries.
   (c) are 12–30% band alerts pulling their weight (belief 3)?
   (d) is PRE_SPIKE producing at least a handful of alerts per day? If zero,
       consider threshold 70→65 before touching weights.
+
+### 2026-06-12 — band widening + threshold recalibration (post-mortem driven)
+
+- `PRE_SPIKE_PROB_MAX` 0.30 → **0.60**, `PRE_SPIKE_ALERT_SCORE` 70 → **45**,
+  `PRE_SPIKE_URGENT_SCORE` 80 → **60**.
+- Basis: the missed-wave post-mortem (above) plus a replay sweep over the
+  widened universe (82 completed series with band-eligible score rows, 25
+  waves; ex-out-of-band rows credited +5 for in_band, but coiled/new_low
+  could not be reconstructed, so replayed scores understate live ones):
+  45 → 61.5% precision / 64% recall / ~9 fires/day; 40 → 59.4% / 76% /
+  ~11/day; 50 → 64.3% / 36% / ~5/day. Picked 45; understated replay
+  scores argue against going lower. Urgent 60 = top of the observed wave
+  score distribution (max 64; replay precision 75% there).
+- `analyze_missed_waves.py` added to the daily report — each morning now
+  shows which waves were missed and which gate killed them.
+- Expected side effects: PRE_SPIKE goes from ~0 alerts/day to roughly
+  ~9/day; score_history grows much faster (every 2–60% row records). If
+  morning reports show noise, raise 45 → 50 before touching weights.
+- Caveat: calibrated on local 120 s cadence data. Actions cadence
+  (2-cycle bursts ~10 min apart) changes velocity_5c spans — re-check
+  precision/recall at the 2026-06-18 review on post-migration data only.
 
 ## Open questions / next ideas
 
