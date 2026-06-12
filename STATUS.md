@@ -99,6 +99,15 @@ Every cycle, per market: probability, bid/ask, spread, volume, liquidity, veloci
 - ~50/50 new matches produce no alert by design — alerts require low odds, movement, and quality gates.
 - First run after a DB reset is quieter than before because alerts require market classification and minimum history.
 
+## Recent changes (2026-06-12b) — GitHub Actions hosting prepared
+
+Free 24/7 cloud hosting (no credit card) via scheduled GitHub Actions runs —
+see [SETUP_GITHUB.md](SETUP_GITHUB.md) for the 10-minute setup + cutover.
+Code changes: `MAX_SCAN_CYCLES` burst mode in main.py, `SNAPSHOT_RETENTION_DAYS`
+pruning in storage, `.github/workflows/` (scanner every ~10 min + daily report),
+`.gitignore`, local git repo initialised (push pending — needs the GitHub repo).
+Local Task Scheduler hosting keeps working unchanged until cutover.
+
 ## Recent changes (2026-06-12) — retrospective wave backtest
 
 1. New `backtest_match_waves.py` — labels every saved Polymarket match-winner

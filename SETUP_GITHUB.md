@@ -29,13 +29,18 @@ On github.com: **New repository** → name e.g. `tennis-odds-alert-bot` →
 
 ### 2. Push the code
 
-From this folder (`git init` was already run; `.gitignore` keeps `.env`,
-`*.pem`, `*.db`, and logs out):
+From this folder (`git init` + initial commit were already done; `.gitignore`
+keeps `.env`, `*.pem`, `*.db`, and logs out):
 
 ```powershell
+git config user.name "<your github username>"
+git config user.email "<your github noreply email>"   # Settings → Emails
 git remote add origin https://github.com/<YOUR_USERNAME>/tennis-odds-alert-bot.git
 git push -u origin main
 ```
+
+(The identity lines are cosmetic — they make future commits show as you
+instead of the "TennisBot" placeholder used for the initial commit.)
 
 ### 3. Add the three secrets
 
