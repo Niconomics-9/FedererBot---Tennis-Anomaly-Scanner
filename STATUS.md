@@ -94,10 +94,21 @@ Every cycle, per market: probability, bid/ask, spread, volume, liquidity, veloci
 
 ## Known limitations
 
-- **Process lifetime:** the bot dies if this session closes, the PC sleeps, or reboots. Not yet installed as a persistent service — Windows Task Scheduler setup is the pending fix.
-- Kalshi fetch makes many API calls (25 series × events × markets), so a Kalshi poll takes ~1–2 min of the cycle.
+- Kalshi fetch makes many API calls (25 series × events × markets) paced at ~6.7 req/s to stay under Kalshi's ~10 req/s limit, so a Kalshi poll takes ~45 s of the cycle.
 - ~50/50 new matches produce no alert by design — alerts require low odds, movement, and quality gates.
 - First run after a DB reset is quieter than before because alerts require market classification and minimum history.
+
+## Recent changes (2026-06-12c) — GitHub Actions hosting LIVE
+
+Cutover completed: code pushed to
+[Niconomics-9/FedererBot---Tennis-Anomaly-Scanner](https://github.com/Niconomics-9/FedererBot---Tennis-Anomaly-Scanner),
+the three Actions secrets set, Scanner workflow green on schedule, Daily
+report workflow verified end-to-end (report committed + db backup artifact).
+Local Task Scheduler tasks ("TennisBot Scanner", "TennisBot Daily Report")
+are **disabled** — re-enable them only if moving back off Actions.
+First hosted run lost most Kalshi markets to 429 rate limits (runners issue
+requests faster than Kalshi's ~10 req/s cap); fixed by pacing requests
+150 ms apart and retrying 429s with backoff in `kalshi_provider.py`.
 
 ## Recent changes (2026-06-12b) — GitHub Actions hosting prepared
 
@@ -141,4 +152,4 @@ Local Task Scheduler hosting keeps working unchanged until cutover.
 - [ ] ~2026-06-18: review a week of pre-match-only data in `reports\` against LEARNINGS.md beliefs
 - [ ] Continue PRE_SPIKE calibration after more completed score_history rows
 - [ ] External signals stub (news/social) — likely the biggest source of pre-match edge
-- [ ] Optional: speed up Kalshi fetch (batch/parallel requests)
+- [ ] ~~Optional: speed up Kalshi fetch (batch/parallel requests)~~ — not viable: Kalshi caps at ~10 req/s, requests are now deliberately paced (2026-06-12)
