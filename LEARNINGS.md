@@ -75,13 +75,45 @@ pre-match snapshots to judge.
   window, and 99 completed series had too little pre-match history (bot
   often first sees a market late).
 
+### 2026-06-12 — missed-wave post-mortem (why 30/31 waves produced no alert)
+
+New `analyze_missed_waves.py` attributes every missed wave to the first gate
+that killed it, using the saved score trail (components_json). Over the full
+local dataset (31 waves, 1 caught, 30 missed):
+
+- **24/30 (80%) = `never_in_band`**: the series never traded inside the
+  PRE_SPIKE 2–30% band pre-match, so the hard band gate
+  (pre_spike_engine `PRE_SPIKE_PROB_MIN/MAX`) made an alert structurally
+  impossible at ANY threshold. Their entries sat at 31–55%, and the largest
+  misses (+55.5, +41.5, +38.5 pp) entered at ~32–53% — these are
+  **coin-flip matches where steam established a favorite**, not longshot
+  spikes. Belief 3 widened the band to 30%; the data says the waves live
+  *above* it (30–60%, zero observed above 60%).
+- **5/30 (17%) = `score_too_low`**: in-band and scored, but best eligible
+  score was 44–64 (median 55) vs threshold 70. Component view at each
+  case's best row: `external.momentum` always 0 (stub holds 10 pts
+  hostage), `pressure.sustained_move` nearly never fires (1/5), and
+  `coiled_turning_up` is weak (mean 4.8/12) — while volume/spread/freq/
+  liquidity points were largely earned. Practical ceiling is low-60s, so
+  **70 is unreachable**, confirming the threshold-sweep finding live.
+- 1/30 = in-band but below the score-history floor (no trail to judge).
+- The single caught wave (Tomljanovic +27 pp) was caught by
+  **FAVORITE_RECOVERY, not PRE_SPIKE** — PRE_SPIKE recall on real waves is
+  currently 0%. Only 1 pre-match false alarm (NEW_LOW_WATCH, flat).
+
+Implication for the 2026-06-18 review: the fix is primarily the **band cap**
+(0.30 → ~0.60), then re-sweep the threshold on the widened universe (the old
+sweep said ≥40 ≈ 61% precision / 64% recall); lowering the threshold alone
+rescues at most 4–5 of 30. Watch whether the low_odds bucket's "near the
+low" semantics still make sense for 30–60% entries.
+
 ## Current beliefs (revise with data)
 
 | # | Belief | Status |
 |---|--------|--------|
 | 1 | In-play swings are unusable for this strategy — by the time a comeback shows in odds, the wave already happened. | Adopted as a hard gate, 2026-06-11 |
 | 2 | Membership in a low-odds band is not evidence a price will move; pressure signals (volume surge, spread tightening, sustained drift, update frequency) are. | Adopted: in_band 15 → 5 pts, sustained_move added at 10 pts |
-| 3 | Pre-match waves are not confined to sub-12% odds; steam/news moves happen across the band. | Adopted: PRE_SPIKE band 2–12% → 2–30%. Watch whether 12–30% alerts have worse peak/dip ratios |
+| 3 | Pre-match waves are not confined to sub-12% odds; steam/news moves happen across the band. | Adopted: PRE_SPIKE band 2–12% → 2–30%. **Under-corrected** per 2026-06-12 post-mortem: 80% of missed waves entered at 31–55%, above the cap — candidate fix is cap → ~0.60 at the 06-18 review |
 | 4 | Sustained multi-cycle drift (velocity_5c) beats single-cycle velocity as a wave precursor, since one tick is often just a repricing. | Untested — check component report after ~1 week |
 | 5 | Alerts need lead time to be actionable; <10 min before start is too late to ride a wave. | Adopted as ALERT_PRE_MATCH_MIN_LEAD_MINUTES=10 |
 | 6 | Cross-exchange (Kalshi twin moving first) is a strong confirm but rarely matches; don't make alerts depend on it. | Unchanged at max 6 pts |
