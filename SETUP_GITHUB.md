@@ -92,6 +92,6 @@ local bot already alerted on — one-time noise.
 ## Day-to-day
 
 Nothing to run. Alerts arrive in Discord; the daily report and the
-`match_waves_*.csv` backtest dataset land in `reports/` in the repo each
-morning (9:00 AM ET). The Actions tab is the health dashboard — a wall of
+`match_waves_*.csv` backtest dataset land in `reports/` in the repo
+overnight (midnight EDT / 11 PM EST), ready to read in the morning. The Actions tab is the health dashboard — a wall of
 green checkmarks every 10 minutes.
