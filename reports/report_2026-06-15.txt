@@ -1,0 +1,295 @@
+TennisBot daily report — generated 2026-06-15 10:29 (local)
+
+##############################################################################
+# analyze_alert_outcomes.py
+##############################################################################
+
+======================================================================================
+Alert outcomes by type — forward window 30 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+NEW_LOW_WATCH                    2    +0.00p    +0.00p    0%    0%    +0.00p
+PRE_SPIKE_CANDIDATE            149    +0.00p    +2.50p    0%    0%    +0.00p   (13 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 60 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+NEW_LOW_WATCH                    2    +0.00p    +0.00p    0%    0%    -0.25p
+PRE_SPIKE_CANDIDATE            149    +0.00p    +2.50p    0%    0%    +0.00p   (13 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 120 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+NEW_LOW_WATCH                    2    +0.00p    +0.00p    0%    0%    -0.25p
+PRE_SPIKE_CANDIDATE            157    +0.00p    +5.50p    2%    1%    +0.00p   (5 pending)
+PRE_SPIKE_CANDIDATE_URGENT       1    +0.00p    +0.00p    0%    0%    +0.00p   (1 pending)
+
+======================================================================================
+Pre-match vs in-play at alert time — forward window 60 min
+======================================================================================
+phase            n  med peak >=3pp >=5pp   med dip
+pre_match      152    +0.00p    0%    0%    +0.00p
+in_play          0
+unknown          0
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_alert_outcomes.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# analyze_pre_spike.py
+##############################################################################
+
+========================================================================
+Score buckets — hit = forward move >= +3 pp within 60 min
+========================================================================
+bucket          n   hits  hit-rate  median mv60   max mv60
+0-40        84070    635       1%       +0.00pp    +66.00pp   (79521 pending)
+40-55        3361     98       3%       +0.00pp    +34.00pp   (819 pending)
+55-70          66      2       3%       +0.00pp     +4.50pp   (24 pending)
+70-85           0      -         -            -          -
+85-100          0      -         -            -          -
+
+========================================================================
+Component signal — avg points among hits (n=735) vs misses (n=86762)
+========================================================================
+component                            avg hit  avg miss    edge
+cross.kalshi_confirmation               0.05      0.00   +0.05
+external.momentum                       0.00      0.00   +0.00
+low_odds.coiled_turning_up              0.54      0.93   -0.39
+low_odds.in_band                        4.22      4.83   -0.61
+low_odds.recent_new_low                 5.00      5.87   -0.87
+pressure.acceleration_positive          1.57      0.76   +0.81
+pressure.liquidity_rising               0.64      0.62   +0.02
+pressure.spread_tightening              2.32      1.18   +1.14
+pressure.sustained_move                 2.35      0.89   +1.46
+pressure.update_freq_rising             0.20      0.01   +0.19
+pressure.velocity_positive              2.32      0.95   +1.36
+pressure.volume_surge                   4.43      0.76   +3.68
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_pre_spike.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# backtest_match_waves.py
+##############################################################################
+
+======================================================================================
+Saved data inventory — snapshots from 2026-06-12T15:31:11.960391 to 2026-06-15T07:10:51.257268 (UTC)
+======================================================================================
+source        snapshots  matches   series
+polymarket      142,020    7,888    7,917
+kalshi           48,110    3,526    3,530
+alerts sent: 166  |  score_history rows: 167,861
+
+======================================================================================
+Backtest universe — Polymarket match-winner series with a known start time
+======================================================================================
+series found: 525  (completed 293, upcoming 232)
+skipped: 7392 prop/future/unknown series, 0 match-winner series without start time
+completed but insufficient_history: 111
+
+======================================================================================
+Would it have worked? — best pre-match entry->peak move, 182 series
+(worked = wave >= +3 pp; entry >= 10 min before start)
+======================================================================================
+label                       n   share  med wave  med entry lead
+wave_5pp                   54   29.7%   +18.50p           923m
+wave_3pp                   23   12.6%    +4.00p           895m
+small_move                 44   24.2%    +1.50p           528m
+flat                       61   33.5%    +0.00p           590m
+
+would have worked: 77/182 series (42.3%) — 77/182 distinct matches (42.3%)
+
+--------------------------------------------------------------------------------------
+By entry band (belief 3: are 30-60% entries pulling their weight?)
+band            n  worked    rate  med wave   med dip
+2-12%           3       1   33.3%    +2.50p    +0.00p
+12-30%         16       8   50.0%    +3.00p    +0.00p
+30-60%        135      65   48.1%    +2.50p    +0.00p
+60%+           28       3   10.7%    +0.75p    +0.00p
+
+--------------------------------------------------------------------------------------
+Wave timing (worked series) — how far before the start do waves begin/peak?
+entry lead: median 912 min (IQR 678-1138 min before start)
+peak lead: median 496 min (IQR 113-819 min before start)
+
+--------------------------------------------------------------------------------------
+Did the live bot catch them? (pre-match alerts on this series)
+waves caught: 27/77 (35.1% recall)
+pre-match alerts on completed series: 52, of which on waves: 27 (51.9% precision)
+
+--------------------------------------------------------------------------------------
+watch_score replay — max pre-match PRE_SPIKE score, 174 series with scores
+median max score — waves: 43, non-waves: 36
+threshold sweep (77 wave series have score history; live alert threshold is 45):
+threshold   fired   hit  precision   recall
+>= 30         147    76     51.7%   98.7%
+>= 40         101    56     55.4%   72.7%
+>= 50          40    18     45.0%   23.4%
+>= 60           2     2    100.0%    2.6%
+>= 45          77    37     48.1%   48.1%
+
+Per-series dataset written to /home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/reports/match_waves_2026-06-15.csv
+
+##############################################################################
+# analyze_missed_waves.py
+##############################################################################
+waves: 77  caught: 27  missed: 50
+
+failure mode           wave  entry%   peak%  maxScore  series
+score_too_low        +66.5p   13.5   80.0        22  Tessa Brockmann | Grass Court Championships, Qualification: Tes
+score_too_low        +46.0p   53.5   99.5        43  Jiri Lehecka | Stuttgart Open: Jiri Lehecka vs Frances Tiafo
+score_too_low        +42.5p   50.0   92.5        40  Victoria Milovanova | ITF Monastir: Victoria Milovanova vs Lourdes 
+score_too_low        +41.5p   48.0   89.5        34  Aspen Schuman | ITF Monastir: Aspen Schuman vs Sun Min Ha
+score_too_low        +39.5p   41.5   81.0        13  Carmen Gallardo Guevara | ITF Madrid: Carmen Gallardo Guevara vs Briyan
+score_too_low        +39.0p   43.5   82.5        19  Zeynep Sonmez | Nottingham Open, Qualification: Zeynep Sonmez
+score_too_low        +36.0p   36.5   72.5        42  Suzan Lamens | Grass Court Championships, Qualification: Suz
+score_too_low        +36.0p   43.5   79.5        24  Matthew Dellavedova | ITF Maanshan: Matthew Dellavedova vs Chan-Yeo
+score_too_low        +35.0p   41.0   76.0        13  Clara Burel | ITF Nice: Clara Burel vs Maria Sara Popa
+score_too_low        +34.5p   50.0   84.5        19  Radu Mihai Papoe | ITF Curtea de Arges: Radu Mihai Papoe vs Anas
+score_too_low        +33.0p   50.0   83.0        28  Victoria Milovanova | ITF Monastir: Victoria Milovanova vs Aspen Sc
+score_too_low        +31.5p   43.0   74.5        19  Jesper de Jong | Cattolica: Jesper de Jong vs Enrico Dalla Val
+score_too_low        +31.5p   50.0   81.5        15  Oleksii Krutykh | ITF Ceska Lipa: Oleksii Krutykh vs Denis Peta
+score_too_low        +30.5p   35.5   66.0        41  Elizara Yaneva | Brescia: Elizara Yaneva vs Giorgia Pedone
+score_too_low        +30.0p   35.5   65.5        24  Aliona Falei | ITF Guimaraes: Aliona Falei vs Savannah Broad
+gated_after_score    +29.5p   32.5   62.0        63  Iva Jovic | Nottingham Open: Iva Jovic vs Karolina Plisko
+score_too_low        +28.5p   48.5   77.0        19  Martin Landaluce | Halle Open, Qualification: Martin Landaluce v
+score_too_low        +26.5p   33.0   59.5        40  Fernandez/Siegemund | HSBC Championships (Doubles): Fernandez/Siege
+score_too_low        +22.5p   50.0   72.5        13  Barbora Krejcikova | Libema Open: Barbora Krejcikova vs Magda Line
+score_too_low        +22.5p   26.5   49.0        33  Roger Pascual Ferra | ITF Monastir: Roger Pascual Ferra vs Cesar Bo
+score_too_low        +22.0p   29.0   51.0        30  Haydar Cem Gokpinar | ITF Kayseri: Haydar Cem Gokpinar vs Maxwell M
+score_too_low        +21.5p   28.0   49.5        36  Glinka/Sakellaridis | Stuttgart Open (Doubles): Glinka/Sakellaridis
+score_too_low        +20.0p   50.0   70.0        19  Marie Mettraux | ITF Kursumlijska Banja: Marie Mettraux vs Emm
+score_too_low        +19.5p   50.0   69.5        13  Sean Cuenin | ITF Kursumlijska Banja: Sean Cuenin vs Branko
+score_too_low        +18.0p   50.0   68.0        41  Anna Blinkova | Nottingham Open, Qualification: Anna Blinkova
+score_too_low        +17.0p   48.5   65.5        19  Mattia Bellucci | Halle Open, Qualification: Mattia Bellucci vs
+score_too_low        +17.0p   48.5   65.5        38  Polina Iatcenko | ITF Hurghada: Polina Iatcenko vs Anastasia Ti
+score_too_low        +16.5p   50.0   66.5        16  Tatjana Maria | Nottingham Open: Tatjana Maria vs Janice Tjen
+score_too_low        +14.0p   50.0   64.0        32  Antonia Ruzic | Nottingham Open, Qualification: Antonia Ruzic
+score_too_low        +11.5p   50.0   61.5        13  Guido Justo | Tucuman: Guido Justo vs Luciano Emanuel Ambro
+score_too_low        +10.0p   47.0   57.0        42  Magdalena Frech | Grass Court Championships, Qualification: Mag
+never_in_band         +9.5p   62.0   71.5         —  Ksenia Zaytseva | ITF Kursumlijska Banja: Ksenia Zaytseva vs Ma
+score_too_low         +8.5p   45.5   54.0        40  Bergs/Rinderknech | Libema Open (Doubles): Bergs/Rinderknech vs A
+gated_after_score     +8.5p   50.0   58.5        49  Aoyama/Liang | Libema Open (Doubles): Aoyama/Liang vs Neel/O
+score_too_low         +6.5p   49.0   55.5        42  Kaylan Bigun | ITF Los Angeles: Kaylan Bigun vs Andrew Johns
+score_too_low         +5.5p   50.0   55.5        37  Viktorija Golubic | Nottingham Open, Qualification: Viktorija Gol
+score_too_low         +5.0p   50.0   55.0        38  Federico Cina | Bratislava: Federico Cina vs Taro Daniel
+score_too_low         +4.5p   45.5   50.0        41  Jecan/Pavel | Cattolica (Doubles): Jecan/Pavel vs Grevelius
+never_in_band         +4.0p   61.5   65.5         —  Raphael Collignon | Halle Open, Qualification: Raphael Collignon 
+gated_after_score     +4.0p   50.0   54.0        49  Henry Bernet | ITF Varnamo: Henry Bernet vs Sandro Kopp
+gated_after_score     +4.0p   43.5   47.5        45  Oliver Tarvet | Nottingham 2: Oliver Tarvet vs Roman Safiulli
+gated_after_score     +3.5p   50.0   53.5        49  Gorgodze/Karamoko | Modena (Doubles): Gorgodze/Karamoko vs Cavall
+score_too_low         +3.5p   42.0   45.5        35  Himeno Sakatsume | Nottingham Open, Qualification: Himeno Sakats
+score_too_low         +3.0p   50.0   53.0        43  Julia Avdeeva | ITF Ceska Lipa: Julia Avdeeva vs Eva Vedder
+score_too_low         +3.0p   50.0   53.0        30  Emma Lene | ITF Casablanca: Emma Lene vs Aran Teixido Gar
+never_in_band         +3.0p   65.0   68.0         —  Hikaru Sato | ITF Tokyo: Hikaru Sato vs Kayo Nishimura
+score_too_low         +3.0p   50.0   53.0        34  Naoya Honda | ITF Tokyo: Naoya Honda vs Alan Magadan
+score_too_low         +3.0p   29.0   32.0        43  Ilay Yoruk | ITF Kayseri: Ilay Yoruk vs Lan Mi
+score_too_low         +3.0p   59.5   62.5        13  Felix Balshaw | Lyon: Felix Balshaw vs David Jorda Sanchis
+score_too_low         +3.0p   58.5   61.5        30  Alexander Shevchenko | Bratislava: Alexander Shevchenko vs Taro Dani
+
+================================================================================
+attribution: score_too_low: 42, gated_after_score: 5, never_in_band: 3
+
+score_too_low cases — best eligible score: median 31, max 43 (threshold 45)
+
+component points at each case's best row (max possible | mean | hit rate):
+  external.momentum                 10 |   0.0 | 0/42 nonzero
+  low_odds.coiled_turning_up        12 |   2.6 | 12/42 nonzero
+  pressure.volume_surge             12 |   3.1 | 11/42 nonzero
+  pressure.sustained_move           10 |   1.4 | 7/42 nonzero
+  pressure.update_freq_rising        6 |   0.1 | 2/42 nonzero
+  cross.kalshi_confirmation          6 |   0.8 | 6/42 nonzero
+  pressure.velocity_positive         8 |   3.4 | 20/42 nonzero
+  low_odds.recent_new_low            8 |   5.0 | 31/42 nonzero
+  pressure.liquidity_rising          5 |   2.1 | 19/42 nonzero
+  pressure.spread_tightening         6 |   3.1 | 22/42 nonzero
+  pressure.acceleration_positive     5 |   2.4 | 20/42 nonzero
+  low_odds.in_band                   5 |   5.0 | 42/42 nonzero
+
+caught wave: Isaro/Poonacha | Lyon (Doubles): Isaro/Poonacha vs Mansouri/Neuchri (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Zachary Svajda | HSBC Championships, Qualification: Zachary Svajda  (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Filippo Romano | Ilkley: Filippo Romano vs Jack Pinnington Jones (PRE_SPIKE_CANDIDATE, wave +19.0p)
+
+caught wave: Aleksandar Vukic | HSBC Championships, Qualification: Aleksandar Vuki (PRE_SPIKE_CANDIDATE, wave +11.5p)
+
+caught wave: Katie Volynets | Nottingham Open, Qualification: Katie Volynets vs  (PRE_SPIKE_CANDIDATE_URGENT, wave +5.0p)
+
+caught wave: Jacob Fearnley | Ilkley: Jacob Fearnley vs Yunchaokete Bu (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Luciano Emanuel Ambrogi | Tucuman: Luciano Emanuel Ambrogi vs Johan Alexande (PRE_SPIKE_CANDIDATE, wave +6.5p)
+
+caught wave: Max Schoenhaus | Halle Open: Max Schoenhaus vs Learner Tien (PRE_SPIKE_CANDIDATE, wave +4.5p)
+
+caught wave: Yujia Huang | ITF Wuning: Yujia Huang vs Sara Saito (PRE_SPIKE_CANDIDATE, wave +8.0p)
+
+caught wave: Diane Parry | Grass Court Championships, Qualification: Diane Pa (PRE_SPIKE_CANDIDATE, wave +36.5p)
+
+caught wave: Marie Bouzkova | Nottingham Open: Marie Bouzkova vs Tereza Valentov (PRE_SPIKE_CANDIDATE, wave +14.5p)
+
+caught wave: Nicolai Budkov Kjaer | Nottingham 2: Nicolai Budkov Kjaer vs Mackenzie Mc (PRE_SPIKE_CANDIDATE, wave +14.5p)
+
+caught wave: Ben Shelton | Stuttgart Open: Ben Shelton vs Sho Shimabukuro (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Naoya Honda | ITF Tokyo: Naoya Honda vs Jangjun Kim (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Pawit Sornlaksup | ITF Maanshan: Pawit Sornlaksup vs Kokoro Isomura (PRE_SPIKE_CANDIDATE, wave +7.0p)
+
+caught wave: Lulu Sun | Grass Court Championships, Qualification: Lulu Sun (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Martyna Kubka | ITF Hurghada: Martyna Kubka vs Gabriela Andrea Knu (PRE_SPIKE_CANDIDATE, wave +8.0p)
+
+caught wave: Rei Sakamoto | Nottingham 2: Rei Sakamoto vs Yibing Wu (PRE_SPIKE_CANDIDATE, wave +16.5p)
+
+caught wave: Shintaro Mochizuki | Nottingham 2: Shintaro Mochizuki vs Michael Zheng (PRE_SPIKE_CANDIDATE, wave +18.0p)
+
+caught wave: Kamil Majchrzak | Libema Open: Kamil Majchrzak vs Alex de Minaur (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Lorenzo Sonego | Halle Open, Qualification: Lorenzo Sonego vs Nikol (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Nikola Bartunkova | Grass Court Championships: Nikola Bartunkova vs Co (PRE_SPIKE_CANDIDATE, wave +32.5p)
+
+caught wave: Katarzyna Kawa | Modena: Katarzyna Kawa vs Lucia Bronzetti (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Sebastian Gorzny | ITF Wichita: Sebastian Gorzny vs Ozan Baris (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Carles Cordoba | ITF Kursumlijska Banja: Carles Cordoba vs Stefano  (PRE_SPIKE_CANDIDATE, wave +4.5p)
+
+caught wave: Polina Iatcenko | ITF Hurghada: Polina Iatcenko vs Martyna Kubka (PRE_SPIKE_CANDIDATE, wave +18.0p)
+
+caught wave: Alexander Shevchenko | Bratislava: Alexander Shevchenko vs Vitaliy Sachko (PRE_SPIKE_CANDIDATE, wave +9.5p)
+false alarms (pre-match alert, no wave): 26
+  Alexander Bublik | Stuttgart Open: Alexander Bublik vs Taylor Fritz (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Nuria Brancaccio | Modena: Nuria Brancaccio vs Lucia Bronzetti (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Polina Kudermetova | Grass Court Championships, Qualification: Polina K (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Johannus Monday | HSBC Championships, Qualification: Johannus Monday (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Donna Vekic | HSBC Championships: Donna Vekic vs Emma Raducanu (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Mayuka Aikawa | ITF Tokyo: Mayuka Aikawa vs Ikumi Yamazaki (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Kaitlin Quevedo | Modena: Kaitlin Quevedo vs Laura Samson (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Yaroslav Demin | ITF kiseljak: Yaroslav Demin vs Andrey Chepelev (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Maria Timofeeva | Grass Court Championships, Qualification: Maria Ti (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Katarina Kuzmova | ITF Guimaraes: Katarina Kuzmova vs Savannah Broadu (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Daniel Evans | HSBC Championships, Qualification: Daniel Evans vs (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Robin Montgomery | Libema Open: Robin Montgomery vs Barbora Krejcikov (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Caty McNally | Libema Open: Caty McNally vs Ajla Tomljanovic (NEW_LOW_WATCH, label=small_move, wave +2.5p)
+  David Jorda Sanchis | Lyon: David Jorda Sanchis vs Tristan Boyer (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Nadia Podoroska | ITF San Gregorio: Nadia Podoroska vs Lucciana Pere (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Ben Shelton | Stuttgart Open: Ben Shelton vs Taylor Fritz (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Pawit Sornlaksup | ITF Maanshan: Pawit Sornlaksup vs Matthew Dellaved (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Caty McNally | Nottingham Open, Qualification: Caty McNally vs Mi (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Ana Grubor | ITF Decatur: Ana Grubor vs Lea Ma (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Hikaru Shiraishi | ITF Tokyo: Hikaru Shiraishi vs Jangjun Kim (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Tristan Schoolkate | Ilkley: Tristan Schoolkate vs Oliver Tarvet (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Lucia Bronzetti | Modena: Lucia Bronzetti vs Laura Samson (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Katie Boulter | HSBC Championships: Katie Boulter vs Donna Vekic (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Tommy Paul | HSBC Championships: Tommy Paul vs Jaume Munar (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Marie Weckerle | ITF Merzig: Marie Weckerle vs Valentina Steiner (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Alexander Blockx | HSBC Championships: Alexander Blockx vs Francisco  (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
