@@ -1,0 +1,865 @@
+TennisBot daily report — generated 2026-06-29 09:03 (local)
+
+##############################################################################
+# analyze_alert_outcomes.py
+##############################################################################
+
+======================================================================================
+Alert outcomes by type — forward window 30 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                        0   (2 pending)
+FAVORITE_RECOVERY                1    +0.00p    +0.00p    0%    0%    +0.00p
+LOW_ODDS_SPIKE                   1    -4.50p    -4.50p    0%    0%    -4.50p
+NEW_LOW_WATCH                   22    +0.00p    +0.00p    0%    0%    +0.00p   (3 pending)
+PRE_SPIKE_CANDIDATE            332    +0.00p    +1.00p    0%    0%    +0.00p   (110 pending)
+PRE_SPIKE_CANDIDATE_URGENT       3    +0.00p    +1.00p    0%    0%    +0.00p   (3 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 60 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                        0   (2 pending)
+FAVORITE_RECOVERY                1    +0.00p    +0.00p    0%    0%    +0.00p
+LOW_ODDS_SPIKE                   1    -4.50p    -4.50p    0%    0%    -4.50p
+NEW_LOW_WATCH                   23    +0.00p    +1.55p    0%    0%    +0.00p   (2 pending)
+PRE_SPIKE_CANDIDATE            336    +0.00p    +1.00p    0%    0%    +0.00p   (106 pending)
+PRE_SPIKE_CANDIDATE_URGENT       4    +0.00p    +1.00p    0%    0%    +0.00p   (2 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 120 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAST_MOVE                        1    -6.50p    -6.50p    0%    0%   -21.50p   (1 pending)
+FAVORITE_RECOVERY                1    +0.00p    +0.00p    0%    0%    -1.00p
+LOW_ODDS_SPIKE                   1    -4.50p    -4.50p    0%    0%    -8.50p
+NEW_LOW_WATCH                   23    +0.00p    +1.55p    0%    0%    +0.00p   (2 pending)
+PRE_SPIKE_CANDIDATE            351    +0.00p   +34.00p    1%    1%    +0.00p   (91 pending)
+PRE_SPIKE_CANDIDATE_URGENT       6    +0.00p    +1.00p    0%    0%    +0.00p
+
+======================================================================================
+Pre-match vs in-play at alert time — forward window 60 min
+======================================================================================
+phase            n  med peak >=3pp >=5pp   med dip
+pre_match      365    +0.00p    0%    0%    +0.00p
+in_play          0
+unknown          0
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_alert_outcomes.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# analyze_pre_spike.py
+##############################################################################
+
+========================================================================
+Score buckets — hit = forward move >= +3 pp within 60 min
+========================================================================
+bucket          n   hits  hit-rate  median mv60   max mv60
+0-40       308975   3120       1%       +0.00pp    +74.00pp   (607914 pending)
+40-55        9427    464       5%       +0.00pp    +48.00pp   (12962 pending)
+55-70         189      6       3%       +0.00pp    +16.50pp   (243 pending)
+70-85           0      -         -            -          -
+85-100          0      -         -            -          -
+
+========================================================================
+Component signal — avg points among hits (n=3590) vs misses (n=315001)
+========================================================================
+component                            avg hit  avg miss    edge
+cross.kalshi_confirmation               0.01      0.01   +0.00
+external.momentum                       0.00      0.00   +0.00
+low_odds.coiled_turning_up              0.67      0.75   -0.08
+low_odds.in_band                        4.39      4.83   -0.44
+low_odds.recent_new_low                 4.82      5.06   -0.24
+pressure.acceleration_positive          1.58      0.75   +0.83
+pressure.liquidity_rising               1.04      0.73   +0.31
+pressure.spread_tightening              2.19      1.09   +1.10
+pressure.sustained_move                 2.35      0.81   +1.54
+pressure.update_freq_rising             0.09      0.02   +0.07
+pressure.velocity_positive              2.19      0.91   +1.28
+pressure.volume_surge                   4.12      0.83   +3.29
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_pre_spike.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# backtest_match_waves.py
+##############################################################################
+
+======================================================================================
+Saved data inventory — snapshots from 2026-06-22T10:33:55.319211 to 2026-06-29T07:00:51.135202 (UTC)
+======================================================================================
+source        snapshots  matches   series
+polymarket      488,895   25,290   25,346
+kalshi          178,552    7,682    7,682
+alerts sent: 918  |  score_history rows: 939,710
+
+======================================================================================
+Backtest universe — Polymarket match-winner series with a known start time
+======================================================================================
+series found: 1613  (completed 1358, upcoming 255)
+skipped: 23733 prop/future/unknown series, 0 match-winner series without start time
+completed but insufficient_history: 332
+
+======================================================================================
+Would it have worked? — best pre-match entry->peak move, 1026 series
+(worked = wave >= +3 pp; entry >= 10 min before start)
+======================================================================================
+label                       n   share  med wave  med entry lead
+wave_5pp                  361   35.2%   +19.50p           931m
+wave_3pp                   97    9.5%    +4.00p           873m
+small_move                277   27.0%    +1.50p           702m
+flat                      291   28.4%    +0.00p           622m
+
+would have worked: 458/1026 series (44.6%) — 458/1026 distinct matches (44.6%)
+
+--------------------------------------------------------------------------------------
+By entry band (belief 3: are 30-60% entries pulling their weight?)
+band            n  worked    rate  med wave   med dip
+2-12%          35      12   34.3%    +1.50p    +0.00p
+12-30%        156      54   34.6%    +1.50p    +0.00p
+30-60%        639     345   54.0%    +3.50p    +0.00p
+60%+          196      47   24.0%    +1.00p    +0.00p
+
+--------------------------------------------------------------------------------------
+Wave timing (worked series) — how far before the start do waves begin/peak?
+entry lead: median 924 min (IQR 594-1231 min before start)
+peak lead: median 376 min (IQR 123-751 min before start)
+
+--------------------------------------------------------------------------------------
+Did the live bot catch them? (pre-match alerts on this series)
+waves caught: 69/458 (15.1% recall)
+pre-match alerts on completed series: 187, of which on waves: 69 (36.9% precision)
+
+--------------------------------------------------------------------------------------
+watch_score replay — max pre-match PRE_SPIKE score, 996 series with scores
+median max score — waves: 40, non-waves: 37
+threshold sweep (458 wave series have score history; live alert threshold is 45):
+threshold   fired   hit  precision   recall
+>= 30         847   399     47.1%   87.1%
+>= 40         488   250     51.2%   54.6%
+>= 50         169    70     41.4%   15.3%
+>= 60           4     2     50.0%    0.4%
+>= 45         334   159     47.6%   34.7%
+
+Per-series dataset written to /home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/reports/match_waves_2026-06-29.csv
+
+##############################################################################
+# analyze_missed_waves.py
+##############################################################################
+waves: 458  caught: 69  missed: 389
+
+failure mode           wave  entry%   peak%  maxScore  series
+gated_after_score    +55.5p   33.5   89.0        51  Maxwell Exsted | ITF Claremont: Maxwell Exsted vs Matt Kuhar
+score_too_low        +48.0p   50.0   98.0        13  Dabrowski/Stefani | Lexus Eastbourne Open (Doubles): Dabrowski/St
+score_too_low        +47.5p   50.0   97.5        25  Ajdukovic/Kalender | Targu Mures (Doubles): Ajdukovic/Kalender vs 
+score_too_low        +46.5p   50.0   96.5        19  Matthew Dellavedova | ITF Wuning: Matthew Dellavedova vs Kanan Gasi
+score_too_low        +45.5p   50.0   95.5        13  Duru Soke | ITF Kayseri: Duru Soke vs Hana Shabanpour
+score_too_low        +45.0p   50.0   95.0        19  Emily Sartz-Lunde | ITF Monastir: Emily Sartz-Lunde vs Mirabelle 
+score_too_low        +45.0p   48.0   93.0        19  Branko Djuric | ITF Kursumlijska Banja: Branko Djuric vs Bori
+score_too_low        +44.5p   43.0   87.5        13  Karolina Muchova | Bad Homburg Open: Karolina Muchova vs Irina-C
+score_too_low        +44.5p   46.0   90.5        13  Andrej Nedic | Targu Mures: Andrej Nedic vs Alan Rubio
+score_too_low        +44.5p   50.0   94.5        19  Jan Kupcic | ITF Slovenska Bistrica: Jan Kupcic vs Michela
+score_too_low        +44.5p   50.0   94.5        19  Sebastian Sorger | ITF Zagreb: Sebastian Sorger vs Matic Dimic
+score_too_low        +44.0p   50.0   94.0        19  Dong Ju Kim | ITF Wuning: Dong Ju Kim vs Ryo Minakata
+score_too_low        +43.5p   49.5   93.0        36  Alejandro Turriziani Alvarez | ITF Tanger: Alejandro Turriziani Alvarez vs D
+score_too_low        +43.5p   50.0   93.5        19  Kristina Penickova | ITF Monastir: Kristina Penickova vs Sofia Ava
+score_too_low        +43.5p   50.0   93.5        19  Ayla Aksu | ITF Palma Del Rio: Ayla Aksu vs Esther Lopez 
+gated_after_score    +43.5p   47.5   91.0        49  Marta Soriano Santiago | ITF Galati: Marta Soriano Santiago vs Madhuri
+score_too_low        +43.5p   49.5   93.0        13  Marvin Moeller | ITF Brussels: Marvin Moeller vs David Tixhon
+gated_after_score    +43.0p   50.0   93.0        54  Aidan Kim | ITF Claremont: Aidan Kim vs Brayden Tallakson
+score_too_low        +42.5p   48.0   90.5        24  Kirill Kivattsev | ITF Zagreb: Kirill Kivattsev vs Pavlos Tsitsi
+score_too_low        +42.5p   49.0   91.5        19  Oleksii Krutykh | ITF Kamen: Oleksii Krutykh vs Markus Malaszsz
+score_too_low        +42.5p   50.0   92.5        16  George Lazarov | ITF Kursumlijska Banja: George Lazarov vs Mar
+score_too_low        +42.0p   12.5   54.5        35  Kristina Kovgan | ITF Kursumlijska Banja: Kristina Kovgan vs An
+score_too_low        +41.6p    5.5   47.1        28  Giulia Alessia Monteleone | ITF Kayseri: Giulia Alessia Monteleone vs Jan
+score_too_low        +41.5p   49.0   90.5        39  Reda Bennani | ITF Tanger: Reda Bennani vs Yassine Smiej
+score_too_low        +41.5p   50.0   91.5        41  Florian Broska | ITF Tanger: Florian Broska vs Parth Aggarwal
+gated_after_score    +41.5p   26.5   68.0        51  Lucas Da Silva | Piracicaba: Lucas Da Silva vs Conner Huertas 
+score_too_low        +41.5p   50.0   91.5        29  Vladyslav Orlov | ITF Rzeszow: Vladyslav Orlov vs Mateusz Miton
+score_too_low        +41.0p   40.5   81.5        13  Jelena Ostapenko | Lexus Eastbourne Open: Jelena Ostapenko vs Pa
+score_too_low        +41.0p   44.5   85.5        17  Taylor Fritz | Lexus Eastbourne Open: Taylor Fritz vs Jan Ch
+score_too_low        +41.0p   50.0   91.0        19  Jiaqi Wang | ITF Maanshan: Jiaqi Wang vs Wenfei Yu
+score_too_low        +41.0p   50.5   91.5        30  Lukas Pokorny | ITF Monastir: Lukas Pokorny vs Anas Bennour D
+score_too_low        +41.0p   50.0   91.0        19  Maria Kalyakina | ITF Maanshan: Maria Kalyakina vs Han Hyeongju
+score_too_low        +41.0p   50.0   91.0        13  Wilson Leite | Piracicaba: Wilson Leite vs Filipe Bullamah
+score_too_low        +41.0p   54.0   95.0        19  Kacper Szymkowiak | ITF Rzeszow: Kacper Szymkowiak vs Adam Kaczma
+score_too_low        +41.0p   38.5   79.5        27  Katie Volynets | Wimbledon, Qualification WTA: Katie Volynets 
+score_too_low        +40.5p   50.0   90.5        18  Mert Alkaya | ITF Porto: Mert Alkaya vs Ivan Dreycopp
+score_too_low        +40.5p   48.0   88.5        19  Alana Subasic | ITF Kayseri: Alana Subasic vs Ayline Samardzi
+score_too_low        +40.5p   44.0   84.5        18  Elmer Moeller | Targu Mures: Elmer Moeller vs Luca Potenza
+score_too_low        +40.5p   16.0   56.5        33  Jacob Brumm | ITF Claremont: Jacob Brumm vs Vignesh Goginen
+score_too_low        +40.5p   49.0   89.5        34  Irina Balus | ITF Alkmaar: Irina Balus vs Charlotte Van Zon
+score_too_low        +40.5p   50.0   90.5        24  Marc Majdandzic | ITF Alkmaar: Marc Majdandzic vs Lars Wagenaar
+score_too_low        +40.5p   50.0   90.5        13  Valentina Ivanov | ITF Kamen: Valentina Ivanov vs Sina Herrmann
+score_too_low        +40.0p   50.0   90.0        19  Benito Sanchez Martinez | ITF Kamen: Benito Sanchez Martinez vs Oliver 
+score_too_low        +40.0p   37.5   77.5        33  Lulu Sun | Wimbledon, Qualification WTA: Lulu Sun vs Oce
+score_too_low        +40.0p   50.0   90.0        19  Andrea Obradovic | ITF Kursumlijska Banja: Andrea Obradovic vs N
+score_too_low        +40.0p   39.5   79.5        25  Mutsumi Uemura | ITF Sapporo: Mutsumi Uemura vs Rira Kosaka
+gated_after_score    +40.0p   48.0   88.0        51  Branko Djuric | ITF Kursumlijska Banja: Branko Djuric vs Niko
+score_too_low        +39.0p   50.0   89.0        13  Thiago Seyboth Wild | Piracicaba: Thiago Seyboth Wild vs Juan Manue
+score_too_low        +39.0p   39.0   78.0        13  Daniel Michalski | Plovdiv: Daniel Michalski vs Jelle Sels
+score_too_low        +39.0p   39.5   78.5        33  Ashlyn Krueger | Wimbledon, Qualification WTA: Ashlyn Krueger 
+gated_after_score    +39.0p   41.5   80.5        48  Andrej Nedic | Targu Mures: Andrej Nedic vs Sebastian Gima
+score_too_low        +39.0p   47.0   86.0        13  Camilla Zanolini | ITF Alkmaar: Camilla Zanolini vs Charlotte Na
+score_too_low        +39.0p   22.0   61.0        36  Flynn Thomas | ITF Bergamo: Flynn Thomas vs Giorgio Tabacco
+score_too_low        +39.0p   47.5   86.5        19  Dimitris Azoidis | ITF Kayseri: Dimitris Azoidis vs Vladimir Osm
+score_too_low        +38.5p   50.0   88.5        19  Madelief Hageman | ITF Alkmaar: Madelief Hageman vs Monika Wojci
+score_too_low        +38.5p   43.0   81.5        23  Vladyslav Orlov | ITF Rzeszow: Vladyslav Orlov vs Stefan Seifer
+score_too_low        +38.0p   44.0   82.0        21  Constantin Bittoun Kouzmine | ITF Kayseri: Constantin Bittoun Kouzmine vs B
+score_too_low        +38.0p   41.5   79.5        19  Katie Volynets | Wimbledon, Qualification WTA: Katie Volynets 
+score_too_low        +37.5p   51.0   88.5        19  Constantin Bittoun Kouzmine | ITF Kayseri: Constantin Bittoun Kouzmine vs B
+score_too_low        +37.5p   52.0   89.5        18  Meiqi Guo | ITF Maanshan: Meiqi Guo vs Xiran Lan
+score_too_low        +37.5p   40.5   78.0        30  Sara Saito | ITF Taipei: Sara Saito vs Erika Sema
+score_too_low        +37.0p   50.0   87.0        19  Chloe Paquet | ITF Gdansk: Chloe Paquet vs Amy Sucha
+score_too_low        +37.0p   43.5   80.5        13  Josy Daems | ITF Kamen: Josy Daems vs Tina Manescu
+score_too_low        +37.0p   43.0   80.0        27  Dong Ju Kim | ITF Wuning: Dong Ju Kim vs Yua Taka
+score_too_low        +37.0p   50.0   87.0        19  Sebastian Sorger | ITF Zagreb: Sebastian Sorger vs Vito Tonejc
+score_too_low        +37.0p   39.0   76.0        22  Astrid Olsen | ITF Galati: Astrid Olsen vs Simona Cucu
+score_too_low        +37.0p   42.5   79.5        38  Maximilian Homberg | ITF Slovenska Bistrica: Maximilian Homberg vs
+score_too_low        +37.0p   38.5   75.5        19  Caty McNally | Lexus Eastbourne Open: Caty McNally vs Emilia
+score_too_low        +37.0p   50.0   87.0        19  Nino Ehrenschneider | ITF Alkmaar: Nino Ehrenschneider vs Stan Put
+score_too_low        +36.5p   50.0   86.5        19  Oleksii Krutykh | ITF Kamen: Oleksii Krutykh vs Mariano Dedura-
+score_too_low        +36.5p   41.0   77.5        24  Alexandra Vagramov | ITF Claremont: Alexandra Vagramov vs Sophie S
+score_too_low        +36.5p   30.0   66.5        28  Gregoire Delattre | ITF Brussels: Gregoire Delattre vs Benoit Tor
+score_too_low        +36.0p   50.0   86.0        19  Xi Luo | ITF Maanshan: Xi Luo vs Jiayu Xu
+score_too_low        +36.0p   15.0   51.0        30  Sofia Maria Barbulescu | ITF Galati: Sofia Maria Barbulescu vs Giulia 
+score_too_low        +36.0p   35.5   71.5        38  Nicolai Budkov Kjaer | Wimbledon, Qualification ATP: Nicolai Budkov 
+score_too_low        +36.0p   50.0   86.0        13  Valeria Garnevska | ITF Kursumlijska Banja: Valeria Garnevska vs 
+score_too_low        +36.0p   40.5   76.5        27  Matthew Dellavedova | ITF Wuning: Matthew Dellavedova vs Joshua Cha
+score_too_low        +35.5p   26.0   61.5        33  Stian Klaassen | ITF Claremont: Stian Klaassen vs Luca Pow
+score_too_low        +35.5p   35.5   71.0        41  Noah Zamora | ITF Claremont: Noah Zamora vs Jack Satterfiel
+score_too_low        +35.5p   50.0   85.5        19  Ashlyn Krueger | Wimbledon, Qualification WTA: Ashlyn Krueger 
+score_too_low        +35.0p   50.0   85.0        15  Dabrowski/Stefani | Lexus Eastbourne Open (Doubles): Dabrowski/St
+score_too_low        +34.5p   44.0   78.5        19  Dev Javia | ITF Kayseri: Dev Javia vs Roman Sancilio
+score_too_low        +34.5p   44.0   78.5        13  Felix Balshaw | Targu Mures: Felix Balshaw vs Stefan Haita
+score_too_low        +34.5p   32.5   67.0        27  Matheus Pucinelli de Almeida | Piracicaba: Matheus Pucinelli de Almeida vs G
+score_too_low        +34.0p   31.0   65.0        33  Katarzyna Kawa | Wimbledon, Qualification WTA: Katarzyna Kawa 
+gated_after_score    +34.0p   34.5   68.5        46  Francisca Jorge | Wimbledon, Qualification WTA: Francisca Jorge
+score_too_low        +34.0p   39.0   73.0        13  Denis Petak | ITF Slovenska Bistrica: Denis Petak vs Nik Mi
+score_too_low        +34.0p   50.0   84.0        19  Glib Sekachov | ITF Zagreb: Glib Sekachov vs Eduardo Lage
+score_too_low        +33.5p   43.5   77.0        19  Lukas Pokorny | ITF Monastir: Lukas Pokorny vs Andrea Colombo
+score_too_low        +33.5p   47.5   81.0        39  Nys/Roger-Vasselin | Lexus Eastbourne Open (Doubles): Nys/Roger-Va
+score_too_low        +33.5p   39.0   72.5        13  Gina Feistel | ITF Gdansk: Gina Feistel vs Daria Kuczer
+score_too_low        +33.5p   18.5   52.0        40  Virginia Proietti | ITF Tarvisio: Virginia Proietti vs Federica T
+score_too_low        +33.0p   34.0   67.0        41  Dusica Popovski | ITF Kursumlijska Banja: Dusica Popovski vs Pa
+score_too_low        +33.0p   49.5   82.5        41  Melichar/Routliffe | Bad Homburg Open (Doubles): Melichar/Routliff
+score_too_low        +33.0p   31.0   64.0        26  Stefano D'agostino | ITF Bergamo: Stefano D'agostino vs Federico I
+score_too_low        +33.0p   51.0   84.0        19  Alana Subasic | ITF Kayseri: Alana Subasic vs Berrak Kocak
+score_too_low        +33.0p   40.0   73.0        24  Giannicola Misasi | ITF Kursumlijska Banja: Giannicola Misasi vs 
+score_too_low        +32.5p   35.0   67.5        30  Roman Safiullin | Wimbledon, Qualification ATP: Roman Safiullin
+score_too_low        +32.5p   33.0   65.5        37  Sakura Hosogi | ITF Taipei: Sakura Hosogi vs Kayo Nishimura
+score_too_low        +32.0p   50.0   82.0        13  Loan Lestir | ITF Kayseri: Loan Lestir vs Muzammil Murtaza
+score_too_low        +32.0p   34.5   66.5        38  Matthew William Donald | ITF Bergamo: Matthew William Donald vs Daniel
+score_too_low        +32.0p   50.0   82.0        34  Soto/Zeballos | Piracicaba (Doubles): Soto/Zeballos vs Almeid
+score_too_low        +31.5p   50.0   81.5        19  Karim Bennani | ITF Tanger: Karim Bennani vs Noah Perfetti
+score_too_low        +31.5p   33.0   64.5        38  Felix Balshaw | Targu Mures: Felix Balshaw vs Sumit Nagal
+score_too_low        +31.5p   35.0   66.5        31  Fadi Bidan | ITF Brussels: Fadi Bidan vs Niels Ratiu
+score_too_low        +31.5p   37.5   69.0        19  Aleksandr Braynin | ITF Rzeszow: Aleksandr Braynin vs Tomas Lanik
+score_too_low        +31.5p   20.0   51.5        38  Benjamin Gusic Wan | ITF Monastir: Benjamin Gusic Wan vs Andrea Co
+score_too_low        +31.5p   50.0   81.5        19  Robin Montgomery | Wimbledon, Qualification WTA: Robin Montgomer
+score_too_low        +31.0p   49.0   80.0        19  Josy Daems | ITF Kamen: Josy Daems vs Alice Soulie
+score_too_low        +30.5p   42.0   72.5        39  Selina Atay | ITF Kayseri: Selina Atay vs Alisa Vasileva
+score_too_low        +30.0p   49.5   79.5        39  Kacper Knitter | ITF Rzeszow: Kacper Knitter vs Karol Filar
+score_too_low        +30.0p   45.5   75.5        30  Ekaterina Kazionova | ITF Kamen: Ekaterina Kazionova vs Victoria Po
+score_too_low        +30.0p   37.5   67.5        24  Mackenzie McDonald | Wimbledon, Qualification ATP: Mackenzie McDon
+score_too_low        +30.0p   33.5   63.5        35  Vuk Radjenovic | ITF Kursumlijska Banja: Vuk Radjenovic vs Sam
+score_too_low        +29.5p   27.0   56.5        38  Melvin Kumar | ITF Slovenska Bistrica: Melvin Kumar vs Mak M
+score_too_low        +29.5p   31.0   60.5        38  Toby Samuel | Lexus Eastbourne Open: Toby Samuel vs Thiago 
+score_too_low        +29.5p   50.0   79.5        13  Alyssa Reguer | ITF Monastir: Alyssa Reguer vs Sarah Victoria
+gated_after_score    +29.0p   52.0   81.0        47  Enrico Dalla Valle | Plovdiv: Enrico Dalla Valle vs Nikita Bilozer
+gated_after_score    +29.0p   30.5   59.5        45  Katerina Tsygourova | ITF Tarvisio: Katerina Tsygourova vs Federica
+score_too_low        +28.5p   41.0   69.5        43  Yuno Kitahara | ITF Taipei: Yuno Kitahara vs Thasaporn Naklo
+score_too_low        +28.5p   50.0   78.5        42  Alana Subasic | ITF Kayseri: Alana Subasic vs Kateryna Lazare
+score_too_low        +28.5p   50.0   78.5        19  Joshua Charlton | ITF Wuning: Joshua Charlton vs Zhao Zhao
+score_too_low        +28.5p   50.0   78.5        18  Aleksandr Braynin | ITF Rzeszow: Aleksandr Braynin vs Szymon Karp
+gated_after_score    +28.5p   29.0   57.5        55  Matilde Paoletti | ITF Tarvisio: Matilde Paoletti vs Lucija Ciri
+score_too_low        +28.5p   11.5   40.0        36  Doumbia/Reymond | Lexus Eastbourne Open (Doubles): Doumbia/Reym
+score_too_low        +28.5p   39.0   67.5        16  Gabriele Piraino | Plovdiv: Gabriele Piraino vs Lorenzo Angelini
+gated_after_score    +28.0p   35.0   63.0        47  Haruna Arakawa | ITF Sapporo: Haruna Arakawa vs Shihomi Li Xua
+score_too_low        +28.0p   50.0   78.0        24  Adam Majchrzak | ITF Rzeszow: Adam Majchrzak vs Jakub Januchow
+score_too_low        +27.5p   43.5   71.0        38  Ayano Shimizu | ITF Taipei: Ayano Shimizu vs Priska Madelyn N
+never_in_band        +27.5p   66.5   94.0         —  Natalija Senic | ITF Kursumlijska Banja: Natalija Senic vs Val
+score_too_low        +27.5p   42.0   69.5        18  Rishvanth Krishna | ITF Claremont: Rishvanth Krishna vs Joshua Pe
+score_too_low        +27.0p   43.0   70.0        34  Gyeong Seo Lee | ITF Taipei: Gyeong Seo Lee vs Naho Sato
+score_too_low        +26.5p   38.0   64.5        35  Pietro Romeo Scomparin | ITF Bergamo: Pietro Romeo Scomparin vs Denis 
+score_too_low        +26.5p   50.0   76.5        25  Maleckova/Skoch | Lexus Eastbourne Open (Doubles): Maleckova/Sk
+score_too_low        +26.5p   50.0   76.5        24  Reda Bennani | ITF Tanger: Reda Bennani vs Francesco Ferrari
+score_too_low        +26.0p   50.0   76.0        24  Niklas Guttau | ITF Rzeszow: Niklas Guttau vs Jim Hendrikx
+gated_after_score    +25.5p   29.5   55.0        45  McCartney Kessler | Lexus Eastbourne Open: McCartney Kessler vs A
+score_too_low        +25.5p   53.0   78.5        43  Alina Korneeva | Wimbledon, Qualification WTA: Alina Korneeva 
+never_in_band        +25.5p   67.5   93.0         —  Anastasiya Sobolieva | ITF Gdansk: Anastasiya Sobolieva vs Beatrise 
+score_too_low        +25.5p   31.5   57.0        33  Chase Ferguson | ITF Wuning: Chase Ferguson vs Fanming Meng
+gated_after_score    +25.0p   30.5   55.5        47  Lorenzo Rottoli | ITF Tanger: Lorenzo Rottoli vs Denis Klok
+never_in_band        +24.5p   70.0   94.5         —  Miho Kuramochi | ITF Sapporo: Miho Kuramochi vs Suzuna Oigawa
+gated_after_score    +24.0p   27.5   51.5        51  Balaji/Demoliner | Mallorca Championships (Doubles): Balaji/Demo
+score_too_low        +24.0p   47.5   71.5        15  Barrientos/Behar | Targu Mures (Doubles): Barrientos/Behar vs Lo
+score_too_low        +24.0p   47.0   71.0        36  Haverlag/Lumsden | Lexus Eastbourne Open (Doubles): Haverlag/Lum
+score_too_low        +24.0p   33.5   57.5        40  Felix Balshaw | Targu Mures: Felix Balshaw vs Andrej Nedic
+score_too_low        +24.0p   50.0   74.0        19  Diego Dedura | ITF Bakio: Diego Dedura vs Joaquin Guilleme
+score_too_low        +24.0p   50.0   74.0        32  Louis Wessels | ITF Kamen: Louis Wessels vs Leonid Sheyngezik
+score_too_low        +23.9p   37.5   61.5        41  Pablo Llamas Ruiz | Wimbledon, Qualification ATP: Pablo Llamas Ru
+score_too_low        +23.5p   50.0   73.5        41  Muhammad/Stollar | Lexus Eastbourne Open (Doubles): Muhammad/Sto
+score_too_low        +23.5p   52.0   75.5        13  Anastasiia Firman | ITF Kamen: Anastasiia Firman vs Sophie Greine
+gated_after_score    +23.0p   21.0   44.0        45  Shelbayh/Marcos | Mallorca Championships (Doubles): Shelbayh/Ma
+score_too_low        +23.0p   50.0   73.0        24  Marvin Moeller | ITF Brussels: Marvin Moeller vs Leo Deflandre
+score_too_low        +23.0p   50.0   73.0        19  Miho Kuramochi | ITF Sapporo: Miho Kuramochi vs Seo Yun Choi
+score_too_low        +22.5p   29.0   51.5        40  Darja Semenistaja | Wimbledon, Qualification WTA: Darja Semenista
+score_too_low        +22.0p   50.0   72.0        13  Julia Stamatova | ITF Kursumlijska Banja: Julia Stamatova vs De
+score_too_low        +22.0p   50.0   72.0        18  Alan Wazny | ITF Rzeszow: Alan Wazny vs Jonathan Mridha
+gated_after_score    +22.0p   38.0   60.0        47  Nicolas Parizzia | ITF Slovenska Bistrica: Nicolas Parizzia vs F
+score_too_low        +21.5p   59.0   80.5        44  Cash/Glasspool | Lexus Eastbourne Open (Doubles): Cash/Glasspo
+never_in_band        +21.5p   69.0   90.5         —  Valentina Ivanov | ITF Kamen: Valentina Ivanov vs Camila Rodero
+score_too_low        +21.5p   49.0   70.5        30  Bhambri/Venus | Lexus Eastbourne Open (Doubles): Bhambri/Venu
+score_too_low        +21.5p   50.0   71.5        19  Xiyu Wang | Wimbledon, Qualification WTA: Xiyu Wang vs Ma
+score_too_low        +21.0p    7.0   28.0        28  Leonardo Borrelli | ITF Bergamo: Leonardo Borrelli vs Giuseppe La
+gated_after_score    +21.0p   34.5   55.5        45  Oriol Roca Batalla | Targu Mures: Oriol Roca Batalla vs Francesco 
+gated_after_score    +20.5p   49.5   70.0        53  Vlado Jankanj | ITF Kursumlijska Banja: Vlado Jankanj vs Nico
+score_too_low        +20.5p   22.0   42.5        35  Christopher Thies | ITF Kamen: Christopher Thies vs Tim Hammes
+score_too_low        +20.5p   39.0   59.5        41  Hugo Car | ITF Bergamo: Hugo Car vs Denis Constantin Spi
+gated_after_score    +20.5p   50.0   70.5        45  Oliveira/Almeida | Piracicaba (Doubles): Oliveira/Almeida vs Bas
+score_too_low        +20.0p   46.5   66.5        38  Chris Rodesch | Wimbledon, Qualification ATP: Chris Rodesch v
+gated_after_score    +20.0p   51.0   71.0        47  Barrientos/Behar | Targu Mures (Doubles): Barrientos/Behar vs Ca
+never_in_band        +19.5p   63.0   82.5        41  Bhambri/Venus | Lexus Eastbourne Open (Doubles): Bhambri/Venu
+score_too_low        +19.5p   50.0   69.5        19  Maria Kalyakina | ITF Maanshan: Maria Kalyakina vs Eva Marie De
+score_too_low        +19.0p   30.5   49.5        37  Elmer Moeller | Targu Mures: Elmer Moeller vs Felix Balshaw
+score_too_low        +19.0p   50.0   69.0        13  Prathyusha Rachapudi | ITF Kayseri: Prathyusha Rachapudi vs Jannat C
+score_too_low        +19.0p   60.0   79.0        15  Savannah Broadus | ITF Rome: Savannah Broadus vs Alicia Herrero 
+score_too_low        +18.5p   51.0   69.5        19  Alina Korneeva | Wimbledon, Qualification WTA: Alina Korneeva 
+score_too_low        +18.0p   50.0   68.0        35  Benjamin Hassan | Targu Mures: Benjamin Hassan vs Sumit Nagal
+score_too_low        +18.0p   50.0   68.0        13  Linus Lagerbohm | ITF Kamen: Linus Lagerbohm vs Ruben Hartig
+never_in_band        +18.0p   70.0   88.0         —  Dylan Dietrich | ITF Brussels: Dylan Dietrich vs Adan Freire D
+gated_after_score    +18.0p   45.5   63.5        45  Louis Wessels | ITF Kamen: Louis Wessels vs Brian Bozemoj
+gated_after_score    +18.0p   51.5   69.5        48  Cesar Bouchelaghem | ITF Monastir: Cesar Bouchelaghem vs Billy Bla
+score_too_low        +18.0p   47.0   65.0        38  Fancutt/Rai | Plovdiv (Doubles): Fancutt/Rai vs Dev/Sinha
+score_too_low        +17.5p   26.5   44.0        41  Chan/Tauson | Bad Homburg Open (Doubles): Chan/Tauson vs Pe
+score_too_low        +17.5p   50.0   67.5        44  Anastasia Gasanova | Wimbledon, Qualification WTA: Anastasia Gasan
+score_too_low        +17.5p   50.0   67.5        21  Casanova/Taverna | Piracicaba (Doubles): Casanova/Taverna vs Mar
+score_too_low        +17.5p   50.0   67.5        19  Andrea De Marchi | ITF Kursumlijska Banja: Andrea De Marchi vs M
+score_too_low        +17.5p   60.0   77.5        36  Melo/Molteni | Mallorca Championships (Doubles): Melo/Molten
+score_too_low        +17.0p   57.5   74.5        28  Jecan/Pavel | Targu Mures (Doubles): Jecan/Pavel vs Bianchi
+never_in_band        +17.0p   67.0   84.0         —  Federico Arnaboldi | ITF Bergamo: Federico Arnaboldi vs Niccolo Ci
+score_too_low        +17.0p   15.0   32.0        39  Mohamed Nazim Makhlouf | ITF Monastir: Mohamed Nazim Makhlouf vs Roger
+score_too_low        +16.5p   50.0   66.5        13  Pieter De Lange | ITF Alkmaar: Pieter De Lange vs Manel Lazaro 
+gated_after_score    +16.5p   49.5   66.0        54  Astrid Olsen | ITF Galati: Astrid Olsen vs Allegra Korpanec 
+score_too_low        +16.5p   49.5   66.0        41  Dax Donders | ITF Alkmaar: Dax Donders vs Sydney Zick
+score_too_low        +16.0p   50.0   66.0        33  Pavlasek/Rikl | Mallorca Championships (Doubles): Pavlasek/Ri
+score_too_low        +16.0p   48.0   64.0        34  Couto/Rodrigues | Piracicaba (Doubles): Couto/Rodrigues vs Brag
+gated_after_score    +16.0p   46.5   62.5        46  Bianca Andreescu | Wimbledon, Qualification WTA: Bianca Andreesc
+score_too_low        +15.5p   50.0   65.5        19  Ugo Humbert | Lexus Eastbourne Open: Ugo Humbert vs Jenson 
+gated_after_score    +15.5p   18.5   34.0        47  Duje Markovina | ITF Zagreb: Duje Markovina vs Andrey Chepelev
+gated_after_score    +15.5p   24.0   39.5        45  Piet Luis Pinter | ITF Slovenska Bistrica: Piet Luis Pinter vs E
+gated_after_score    +15.5p   50.0   65.5        51  Jonas Eriksson Ziverts | ITF Monastir: Jonas Eriksson Ziverts vs Aziz 
+gated_after_score    +15.4p   50.0   65.4        46  Mathys Erhard | Plovdiv: Mathys Erhard vs Inaki Montes
+score_too_low        +15.0p   34.5   49.5        37  Pavlos Tsitsipas | ITF Zagreb: Pavlos Tsitsipas vs Kalin Ivanovs
+never_in_band        +15.0p   65.5   80.5         —  Paul Inchauspe | ITF Bakio: Paul Inchauspe vs Iker Urribarrens
+score_too_low        +15.0p   15.0   30.0        39  Anna Donnell | ITF Monastir: Anna Donnell vs Eva Lopez
+score_too_low        +15.0p   50.0   65.0        13  Lucio Ratti | ITF Slovenska Bistrica: Lucio Ratti vs Filip 
+score_too_low        +15.0p   50.0   65.0        13  Taym Al Azmeh | ITF Kamen: Taym Al Azmeh vs Tom Sickenberger
+never_in_band        +15.0p   66.5   81.5         —  Seydina Andre | ITF Bergamo: Seydina Andre vs Louis Larue
+score_too_low        +14.5p   50.0   64.5        35  Marc Majdandzic | ITF Alkmaar: Marc Majdandzic vs Noah Schlagen
+score_too_low        +14.5p   50.5   65.0        13  Vincent Dullinger | ITF Slovenska Bistrica: Vincent Dullinger vs 
+gated_after_score    +14.5p   21.5   36.0        46  Goransson/King | Mallorca Championships (Doubles): Goransson/K
+score_too_low        +14.5p   50.0   64.5        19  Aliaksandra Sasnovich | Wimbledon, Qualification WTA: Aliaksandra Sas
+never_in_band        +14.0p   76.5   90.5         —  Max Purcell | ITF Wuning: Max Purcell vs Xirui Han
+score_too_low        +14.0p   50.0   64.0        41  Jana Hossam Salah | ITF Kayseri: Jana Hossam Salah vs Duru Soke
+never_in_band        +13.5p   70.0   83.5         —  Jack Draper | Lexus Eastbourne Open: Jack Draper vs Jack Pi
+score_too_low        +13.5p   22.0   35.5        43  Sophia Ksandinov | ITF Kayseri: Sophia Ksandinov vs Irem Kurt
+score_too_low        +13.5p   50.5   64.0        20  Loof/Uesugi | Targu Mures (Doubles): Loof/Uesugi vs Latinov
+gated_after_score    +13.0p   23.0   36.0        45  Melih Anavatan | ITF Kayseri: Melih Anavatan vs Nicolas Tepmah
+never_in_band        +13.0p   66.5   79.5        40  Ram/Salisbury | Lexus Eastbourne Open (Doubles): Ram/Salisbur
+gated_after_score    +13.0p   40.0   53.0        50  Meza/Tobon | Targu Mures (Doubles): Meza/Tobon vs Cornea/R
+score_too_low        +13.0p   49.0   62.0        42  Lisa Claeys | ITF Alkmaar: Lisa Claeys vs Fabienne Gettwart
+gated_after_score    +13.0p   50.0   63.0        57  Sutjiadi/Zvonareva | Bad Homburg Open (Doubles): Sutjiadi/Zvonarev
+score_too_low        +12.5p   50.0   62.5        40  Matias Soto | Piracicaba: Matias Soto vs Gonzalo Villanueva
+score_too_low        +12.5p   50.0   62.5        19  Maria Timofeeva | Wimbledon, Qualification WTA: Maria Timofeeva
+score_too_low        +12.5p   50.0   62.5        24  Stijn Paardekooper | ITF Alkmaar: Stijn Paardekooper vs Jesse De J
+score_too_low        +12.5p   50.0   62.5        19  Wushuang Zheng | ITF Maanshan: Wushuang Zheng vs Meiling Wang
+score_too_low        +12.5p   50.0   62.5        13  Kuan-Yi Lee | ITF Wuning: Kuan-Yi Lee vs Aoran Wang
+score_too_low        +12.5p   12.5   25.0        33  Rira Kosaka | ITF Sapporo: Rira Kosaka vs Ying Zhang
+score_too_low        +12.5p   60.0   72.5        30  Keegan Smith | Wimbledon, Qualification ATP: Keegan Smith vs
+score_too_low        +12.0p   49.0   61.0        26  Rethin Pranav Senthil Kumar | ITF Kayseri: Rethin Pranav Senthil Kumar vs T
+score_too_low        +12.0p   37.5   49.5        41  Constantin/Gima | Targu Mures (Doubles): Constantin/Gima vs Loo
+score_too_low        +12.0p   50.0   62.0        30  Miguel/Santos | Piracicaba (Doubles): Miguel/Santos vs Rodrig
+never_in_band        +12.0p   67.5   79.5        18  Dimitar Kuzmanov | Plovdiv: Dimitar Kuzmanov vs Jelle Sels
+score_too_low        +12.0p   40.0   52.0        35  Yuichiro Inui | ITF Brussels: Yuichiro Inui vs Max Wiskandt
+never_in_band        +12.0p   76.5   88.5         —  Nick Hardt | Piracicaba: Nick Hardt vs Nicolas Oliveira
+score_too_low        +12.0p   29.5   41.5        32  Barbiero/Bullamah | Piracicaba (Doubles): Barbiero/Bullamah vs Br
+score_too_low        +11.5p   50.0   61.5        19  Polina Kudermetova | Wimbledon, Qualification WTA: Polina Kudermet
+score_too_low        +11.5p   50.0   61.5        19  Kateryna Lazarenko | ITF Kayseri: Kateryna Lazarenko vs Allison Ni
+score_too_low        +11.5p   50.0   61.5        13  Miguel/Santos | Piracicaba (Doubles): Miguel/Santos vs Pino/P
+score_too_low        +11.5p   50.0   61.5        18  Doga Turkmen | ITF Kayseri: Doga Turkmen vs Caroline Hermann
+score_too_low        +11.5p   58.5   70.0        35  Alina Granwehr | ITF Tarvisio: Alina Granwehr vs Sapfo Sakella
+score_too_low        +11.5p   55.5   67.0        40  Krajicek/Mektic | Mallorca Championships (Doubles): Krajicek/Me
+score_too_low        +11.0p   50.0   61.0        36  Ekaterine Gorgodze | Wimbledon, Qualification WTA: Ekaterine Gorgo
+score_too_low        +11.0p   57.0   68.0        41  Sutjiadi/Zvonareva | Bad Homburg Open (Doubles): Sutjiadi/Zvonarev
+score_too_low        +11.0p   49.0   60.0        36  Markus Malaszszak | ITF Kamen: Markus Malaszszak vs Marcel Volz
+score_too_low        +11.0p   34.5   45.5        36  Gonzalez/Gonzalez | Mallorca Championships (Doubles): Gonzalez/Go
+score_too_low        +11.0p   36.0   47.0        39  Gonzalez/Gonzalez | Mallorca Championships (Doubles): Gonzalez/Go
+score_too_low        +11.0p   50.0   61.0        32  Theo Herrmann | ITF Kayseri: Theo Herrmann vs Matias Reyniak
+score_too_low        +10.5p   23.0   33.5        39  Tang/Zhang | Bad Homburg Open (Doubles): Tang/Zhang vs Per
+score_too_low        +10.5p   50.0   60.5        29  Oscar Weightman | ITF Bakio: Oscar Weightman vs Carles Hernande
+score_too_low        +10.5p   28.0   38.5        39  Cyrus Mahjoob | ITF Kayseri: Cyrus Mahjoob vs Rethin Pranav S
+score_too_low        +10.5p   50.0   60.5        33  Daniela Vismane | ITF Alkmaar: Daniela Vismane vs Jade Groen
+score_too_low        +10.5p   24.0   34.5        39  Isabella Angelina Abendroth | ITF Kamen: Isabella Angelina Abendroth vs Mar
+score_too_low        +10.3p   43.0   53.3        37  Colton Smith | Wimbledon, Qualification ATP: Colton Smith vs
+never_in_band        +10.0p   79.5   89.5         —  Hikaru Sato | ITF Taipei: Hikaru Sato vs Mu Jie Tzeng
+score_too_low        +10.0p   50.0   60.0        28  Britt Du Pree | ITF Gdansk: Britt Du Pree vs Julie Pastikova
+score_too_low        +10.0p   51.5   61.5        13  Frantzen/Haase | Mallorca Championships (Doubles): Frantzen/Ha
+score_too_low        +10.0p   28.0   38.0        39  Alexia Iulia Marginean | ITF Galati: Alexia Iulia Marginean vs Allegra
+score_too_low         +9.5p   60.0   69.5        30  Elias Ymer | Wimbledon, Qualification ATP: Elias Ymer vs T
+score_too_low         +9.5p   50.0   59.5        39  Noah Schlagenhauf | ITF Alkmaar: Noah Schlagenhauf vs Filip Gusta
+score_too_low         +9.5p   13.0   22.5        36  Federico Coria | Wimbledon, Qualification ATP: Federico Coria 
+gated_after_score     +9.5p   57.0   66.5        47  Gaeul Jang | ITF Sapporo: Gaeul Jang vs Yuhan Liu
+score_too_low         +9.5p   50.0   59.5        35  Sarah Rakotomanga | Wimbledon, Qualification WTA: Sarah Rakotoman
+score_too_low         +9.5p   51.0   60.5        19  Thantub Suksumrarn | ITF Wuning: Thantub Suksumrarn vs Yua Taka
+score_too_low         +9.0p   59.0   68.0        32  Joelle Lilly Sophie Steur | ITF Gdansk: Joelle Lilly Sophie Steur vs Lia 
+never_in_band         +9.0p   73.5   82.5         —  Roman Safiullin | Wimbledon, Qualification ATP: Roman Safiullin
+gated_after_score     +9.0p   50.5   59.5        57  Dev/Sinha | Plovdiv (Doubles): Dev/Sinha vs Huang/Zheng
+score_too_low         +9.0p   40.5   49.5        39  Galloway/Kirkov | Mallorca Championships (Doubles): Galloway/Ki
+score_too_low         +9.0p   50.0   59.0        29  Roman Sancilio | ITF Kayseri: Roman Sancilio vs Cagan Efe Tufe
+score_too_low         +9.0p   53.5   62.5        31  Gabi Boitan | Targu Mures: Gabi Boitan vs Denis Yevseyev
+score_too_low         +8.5p   55.0   63.5        28  Philip Henning | Plovdiv: Philip Henning vs Andres Santamarta
+score_too_low         +8.5p   50.0   58.5        41  Neel/Olmos | Lexus Eastbourne Open (Doubles): Neel/Olmos v
+score_too_low         +8.5p   49.0   57.5        23  Ammar Faleh Alhogbani | ITF Kayseri: Ammar Faleh Alhogbani vs Bora Se
+never_in_band         +8.5p   64.0   72.5         —  Sergi Perez Contri | ITF Bakio: Sergi Perez Contri vs Alejandro Ga
+score_too_low         +8.5p   54.0   62.5        19  Dominika Salkova | Wimbledon, Qualification WTA: Dominika Salkov
+score_too_low         +8.0p   47.5   55.5        40  Maximo Zeitune | Piracicaba: Maximo Zeitune vs Nicolas Zanella
+score_too_low         +8.0p   19.5   27.5        41  Marina Bassols Ribera | Wimbledon, Qualification WTA: Marina Bassols 
+score_too_low         +8.0p   31.0   39.0        40  Yelyzaveta Chainykova | ITF Monastir: Yelyzaveta Chainykova vs Marie 
+gated_after_score     +8.0p   50.0   58.0        45  Rodriguez/Urrea | Piracicaba (Doubles): Rodriguez/Urrea vs Monz
+score_too_low         +8.0p   35.0   43.0        40  Klepac/Radisic | Bad Homburg Open (Doubles): Klepac/Radisic vs
+score_too_low         +8.0p   35.0   43.0        31  Lorenzo Angelini | Plovdiv: Lorenzo Angelini vs Dali Blanch
+score_too_low         +8.0p   31.5   39.5        43  Lavinia Luciano | ITF Galati: Lavinia Luciano vs Simona Ogescu
+score_too_low         +7.5p   59.5   67.0        31  Gustavo Almeida | Piracicaba: Gustavo Almeida vs Paulo Dos Sant
+score_too_low         +7.5p   50.0   57.5        33  David Fix | ITF Kamen: David Fix vs Marcus Walters
+score_too_low         +7.5p   58.0   65.5        33  Heather Watson | Wimbledon, Qualification WTA: Heather Watson 
+score_too_low         +7.5p   44.5   52.0        36  Nicolas Robert | ITF Monastir: Nicolas Robert vs Jonas Eriksso
+score_too_low         +7.5p   50.0   57.5        41  Casanova/Taverna | Piracicaba (Doubles): Casanova/Taverna vs Abo
+score_too_low         +7.0p   50.0   57.0        38  Oscar Brown | ITF Kursumlijska Banja: Oscar Brown vs Novak 
+score_too_low         +7.0p   48.0   55.0        41  Prashanth/Ramanathan | Targu Mures (Doubles): Prashanth/Ramanathan v
+gated_after_score     +7.0p   38.5   45.5        50  Alvaro Guillen Meza | Targu Mures: Alvaro Guillen Meza vs Cezar Cre
+gated_after_score     +7.0p   22.5   29.5        47  Stevenson/Willis | Lexus Eastbourne Open (Doubles): Stevenson/Wi
+never_in_band         +7.0p   61.0   68.0         —  Ilinca Sagmar | ITF Galati: Ilinca Sagmar vs Alexia Lavinia P
+score_too_low         +7.0p   45.5   52.5        31  Walid Ahouda | ITF Tanger: Walid Ahouda vs Sean Cuenin
+score_too_low         +7.0p   50.0   57.0        42  Ye Chen | ITF Wuning: Ye Chen vs Geun Jun Kim
+gated_after_score     +7.0p   58.5   65.5        48  Oliver Tarvet | Wimbledon, Qualification ATP: Oliver Tarvet v
+score_too_low         +7.0p   50.0   57.0        33  Nino Ehrenschneider | ITF Alkmaar: Nino Ehrenschneider vs Fons Van 
+score_too_low         +6.5p   60.0   66.5        15  Geoffrey Blancaneaux | Plovdiv: Geoffrey Blancaneaux vs Tomasz Berki
+gated_after_score     +6.5p   51.0   57.5        51  Banthia/Donski | Plovdiv (Doubles): Banthia/Donski vs Ganchev/
+gated_after_score     +6.5p   20.0   26.5        51  Alessio Basile | ITF Brussels: Alessio Basile vs Robert Stromb
+score_too_low         +6.5p   44.0   50.5        24  Couto/Rodrigues | Piracicaba (Doubles): Couto/Rodrigues vs Agui
+score_too_low         +6.5p   49.5   56.0        39  Tessa Johanna Brockmann | ITF Kamen: Tessa Johanna Brockmann vs Ekateri
+gated_after_score     +6.5p   52.5   59.0        57  Sandro Kopp | Plovdiv: Sandro Kopp vs Petr Nesterov
+score_too_low         +6.5p   35.5   42.0        38  Herman Hoeyeraal | ITF Rzeszow: Herman Hoeyeraal vs Alan Wazny
+gated_after_score     +6.5p   50.0   56.5        45  Nys/Roger-Vasselin | Lexus Eastbourne Open (Doubles): Nys/Roger-Va
+gated_after_score     +6.0p   48.0   54.0        50  Amelie Justine Hejtmanek | ITF Kursumlijska Banja: Amelie Justine Hejtma
+never_in_band         +6.0p   75.0   81.0         —  Valerio Aboian | Piracicaba: Valerio Aboian vs Valentin Basel
+score_too_low         +6.0p    5.0   11.0        41  Xirui Han | ITF Wuning: Xirui Han vs Moerani Bouzige
+never_in_band         +6.0p   65.5   71.5         —  Ugo Humbert | Lexus Eastbourne Open: Ugo Humbert vs Quentin
+score_too_low         +6.0p   40.5   46.5        40  Leonie Schuknecht | ITF Kamen: Leonie Schuknecht vs Tina Manescu
+gated_after_score     +6.0p   49.5   55.5        45  Polina Kudermetova | Wimbledon, Qualification WTA: Polina Kudermet
+never_in_band         +6.0p   60.5   66.5         —  Tristan Boyer | Wimbledon, Qualification ATP: Tristan Boyer v
+score_too_low         +6.0p   52.5   58.5        34  Blancaneaux/Martineau | Plovdiv (Doubles): Blancaneaux/Martineau vs F
+score_too_low         +6.0p   44.0   50.0        36  Nicolas Garcia Longo | ITF Alkmaar: Nicolas Garcia Longo vs Jesse De
+gated_after_score     +6.0p   38.0   44.0        46  Filiberto Fumagalli | ITF Bergamo: Filiberto Fumagalli vs Gabriele 
+score_too_low         +6.0p   50.0   56.0        33  Stefan Seifert | ITF Rzeszow: Stefan Seifert vs Patrik Homola
+never_in_band         +6.0p   60.5   66.5         —  Tiago Torres | ITF Porto: Tiago Torres vs Pablo Martinez Gom
+score_too_low         +6.0p    7.0   13.0        35  Alvaro Peiro Serrano | ITF Kursumlijska Banja: Alvaro Peiro Serrano 
+score_too_low         +5.5p   47.5   53.0        41  Toby Samuel | Lexus Eastbourne Open: Toby Samuel vs Juan Ma
+gated_after_score     +5.5p   48.5   54.0        55  Emon Van Loben Sels | ITF Claremont: Emon Van Loben Sels vs Sasha R
+score_too_low         +5.5p   50.0   55.5        43  Bozo Barun | ITF Zagreb: Bozo Barun vs Noa Vukadin
+score_too_low         +5.5p   34.5   40.0        41  Alvaro Guillen Meza | Targu Mures: Alvaro Guillen Meza vs Radu Miha
+score_too_low         +5.5p   26.0   31.5        43  Ekaterina Alexandrova | Bad Homburg Open: Ekaterina Alexandrova vs Mi
+never_in_band         +5.5p   74.0   79.5        16  Nicolas Kicker | Piracicaba: Nicolas Kicker vs Bruno Fernandez
+score_too_low         +5.5p   50.0   55.5        33  Julia Grabher | Wimbledon, Qualification WTA: Julia Grabher v
+never_in_band         +5.0p   73.5   78.5         —  Yunchaokete Bu | Wimbledon, Qualification ATP: Yunchaokete Bu 
+score_too_low         +5.0p   50.0   55.0        33  Brian Bozemoj | ITF Kamen: Brian Bozemoj vs Gabriele Maria No
+gated_after_score     +5.0p   45.0   50.0        46  Frantzen/Haase | Mallorca Championships (Doubles): Frantzen/Ha
+gated_after_score     +5.0p   36.0   41.0        52  Andreozzi/Guinard | Lexus Eastbourne Open (Doubles): Andreozzi/Gu
+score_too_low         +5.0p   42.5   47.5        40  Sara Bejlek | Lexus Eastbourne Open: Sara Bejlek vs Laura S
+gated_after_score     +5.0p   37.0   42.0        58  Eala/Williams | Bad Homburg Open (Doubles): Eala/Williams vs 
+score_too_low         +5.0p   51.0   56.0        40  Alexis Nguyen | ITF Claremont: Alexis Nguyen vs Alyssa Ahn
+gated_after_score     +5.0p   44.0   49.0        45  Kalyanpur/Taylor | Targu Mures (Doubles): Kalyanpur/Taylor vs La
+score_too_low         +4.5p   40.0   44.5        37  Aishi Das | ITF Taipei: Aishi Das vs Ikumi Yamazaki
+never_in_band         +4.5p   68.0   72.5         —  Jaime Faria | Wimbledon, Qualification ATP: Jaime Faria vs 
+score_too_low         +4.5p   42.0   46.5        36  Kacper Szymkowiak | ITF Rzeszow: Kacper Szymkowiak vs Alan Wazny
+score_too_low         +4.5p   57.5   62.0        34  Anastasia Safta | ITF Galati: Anastasia Safta vs Noemi La Cagni
+score_too_low         +4.5p   50.0   54.5        43  Matic Dimic | ITF Zagreb: Matic Dimic vs Drazen Petrovic
+never_in_band         +4.5p   69.0   73.5         —  Paul Inchauspe | ITF Bakio: Paul Inchauspe vs Oscar Weightman
+score_too_low         +4.5p   57.5   62.0        23  Tom Zeuch | ITF Brussels: Tom Zeuch vs Rodrigo Alujas
+score_too_low         +4.5p   50.0   54.5        39  Odeta Panasa | ITF Kursumlijska Banja: Odeta Panasa vs Aless
+score_too_low         +4.5p   45.0   49.5        40  Martins/Tormo | Lexus Eastbourne Open (Doubles): Martins/Torm
+score_too_low         +4.5p   58.5   62.9        18  Claire Liu | Wimbledon, Qualification WTA: Claire Liu vs E
+score_too_low         +4.0p   45.0   49.0        42  Kozyreva/Piter | Lexus Eastbourne Open (Doubles): Kozyreva/Pit
+score_too_low         +4.0p    6.5   10.5        41  Melissa Boyden | ITF Galati: Melissa Boyden vs Diana-Ioana Sim
+gated_after_score     +4.0p   49.5   53.5        53  Bora Sengul | ITF Kayseri: Bora Sengul vs Udit Kamboj
+gated_after_score     +4.0p   50.0   54.0        49  Pranav Karthik | ITF Alkmaar: Pranav Karthik vs Pieter De Lang
+score_too_low         +4.0p   13.5   17.5        42  Oriana Gniewkowska | ITF Gdansk: Oriana Gniewkowska vs Amelia Pasz
+never_in_band         +4.0p   66.5   70.5         —  Arthur Fery | Lexus Eastbourne Open: Arthur Fery vs Juan Ma
+never_in_band         +4.0p   62.5   66.5        45  Sandro Kopp | Plovdiv: Sandro Kopp vs Viktor Durasovic
+gated_after_score     +4.0p   46.0   50.0        46  Sutjiadi/Zvonareva | Bad Homburg Open (Doubles): Sutjiadi/Zvonarev
+score_too_low         +4.0p   14.5   18.5        40  Marianna Shikhanova | ITF Maanshan: Marianna Shikhanova vs Anna Sni
+score_too_low         +4.0p   46.0   50.0        43  Hazem Naw | ITF Kamen: Hazem Naw vs Adrian Oetzbach
+gated_after_score     +4.0p   35.5   39.5        49  Polmans/Seggerman | Mallorca Championships (Doubles): Polmans/Seg
+never_in_band         +4.0p   63.5   67.5         —  Iryna Shymanovich | Wimbledon, Qualification WTA: Iryna Shymanovi
+score_too_low         +4.0p   50.0   54.0        41  Barrientos/Behar | Targu Mures (Doubles): Barrientos/Behar vs Cr
+score_too_low         +4.0p   55.5   59.5        42  Miguel Damas | Targu Mures: Miguel Damas vs Benjamin Hassan
+never_in_band         +4.0p   78.5   82.5         —  Matthew Dellavedova | ITF Wuning: Matthew Dellavedova vs Kuan-Yi Le
+never_in_band         +4.0p   60.5   64.5         —  Jack Draper | Lexus Eastbourne Open: Jack Draper vs Ugo Hum
+never_in_band         +3.5p   90.0   93.5         —  Alan Wazny | ITF Rzeszow: Alan Wazny vs Oliwier Sterniczuk
+score_too_low         +3.5p   28.5   32.0        39  Ayline Samardzic | ITF Kayseri: Ayline Samardzic vs Julia Khramt
+score_too_low         +3.5p   35.0   38.5        41  Mai Hontama | Wimbledon, Qualification WTA: Mai Hontama vs 
+gated_after_score     +3.5p   35.0   38.5        51  Vladimir Osminkin | ITF Kayseri: Vladimir Osminkin vs Aldin Setki
+score_too_low         +3.5p   32.0   35.5        29  Misa Malkin | ITF Rome: Misa Malkin vs Elizabeth Ionescu
+gated_after_score     +3.5p   50.5   54.0        47  Theo Herrmann | ITF Kayseri: Theo Herrmann vs Nicolas Tepmahc
+score_too_low         +3.5p   48.0   51.5        34  Cabral/Miedler | Mallorca Championships (Doubles): Cabral/Mied
+never_in_band         +3.5p   72.0   75.5         —  Julia Riera | Wimbledon, Qualification WTA: Julia Riera vs 
+score_too_low         +3.5p   50.0   53.5        43  Sandro Kopp | Plovdiv: Sandro Kopp vs Alexander Vasilev
+gated_after_score     +3.5p   57.0   60.5        47  Lucas Poullain | ITF Bakio: Lucas Poullain vs Paul Inchauspe
+score_too_low         +3.5p   45.5   49.0        32  Noah Lopez Cherubino | ITF Bakio: Noah Lopez Cherubino vs Edward Win
+score_too_low         +3.5p   50.0   53.5        37  Josy Daems | ITF Kamen: Josy Daems vs Valentina Ivanov
+score_too_low         +3.5p   48.0   51.5        41  Doga Turkmen | ITF Kayseri: Doga Turkmen vs Sandugash Kenzhi
+gated_after_score     +3.5p   50.0   53.5        58  Leyla Fiorella Britez Risso | ITF Asuncion: Leyla Fiorella Britez Risso vs 
+never_in_band         +3.2p   93.5   96.8         —  Amelie Van Impe | ITF Alkmaar: Amelie Van Impe vs Celia Anson S
+never_in_band         +3.0p   69.5   72.5         —  Xiyu Wang | Wimbledon, Qualification WTA: Xiyu Wang vs Ha
+gated_after_score     +3.0p   14.0   17.0        48  Ava Catanzarite | ITF Rome: Ava Catanzarite vs Ekaterina Khayru
+never_in_band         +3.0p   61.5   64.5         —  Keshav Chopra | ITF Kayseri: Keshav Chopra vs Rethin Pranav S
+score_too_low         +3.0p   48.5   51.5        43  Caroline Hermanns | ITF Kayseri: Caroline Hermanns vs Ksenia Lask
+score_too_low         +3.0p   50.0   53.0        41  Yassine Dlimi | ITF Tanger: Yassine Dlimi vs Karim Bennani
+never_in_band         +3.0p   60.5   63.5        19  Alexander Vasilev | Plovdiv: Alexander Vasilev vs Niels Visker
+gated_after_score     +3.0p   56.5   59.5        53  Arribage/Olivetti | Mallorca Championships (Doubles): Arribage/Ol
+score_too_low         +3.0p   42.0   45.0        39  Mathys Picard | ITF Monastir: Mathys Picard vs Diego Fernande
+never_in_band         +3.0p   89.0   92.0         —  Jiaqi Wang | ITF Maanshan: Jiaqi Wang vs Jiayu Xu
+never_in_band         +3.0p   62.5   65.5         —  Sahaja Yamalapalli | ITF Rome: Sahaja Yamalapalli vs Bella Payne
+score_too_low         +3.0p   19.5   22.5        41  Louay Makke | ITF Monastir: Louay Makke vs Nicolas Robert
+gated_after_score     +3.0p   47.5   50.5        45  Eva Vedder | ITF Palma Del Rio: Eva Vedder vs Han Shi
+never_in_band         +3.0p   63.5   66.5         —  Pablo Llamas Ruiz | Wimbledon, Qualification ATP: Pablo Llamas Ru
+gated_after_score     +3.0p   10.5   13.5        45  Thasaporn Naklo | ITF Taipei: Thasaporn Naklo vs Dayeon Back
+score_too_low         +3.0p    9.0   12.0        39  Summer Yardley | ITF Monastir: Summer Yardley vs Matilde Maria
+never_in_band         +3.0p   83.5   86.5         —  Gonzalo Villanueva | Piracicaba: Gonzalo Villanueva vs Nicolas Vil
+never_in_band         +3.0p   82.5   85.5         —  Nick Hardt | Piracicaba: Nick Hardt vs Wilson Leite
+
+================================================================================
+attribution: score_too_low: 285, gated_after_score: 62, never_in_band: 42
+
+score_too_low cases — best eligible score: median 31, max 44 (threshold 45)
+
+component points at each case's best row (max possible | mean | hit rate):
+  external.momentum                 10 |   0.0 | 0/285 nonzero
+  low_odds.coiled_turning_up        12 |   2.4 | 68/285 nonzero
+  pressure.volume_surge             12 |   2.4 | 60/285 nonzero
+  pressure.sustained_move           10 |   1.5 | 48/285 nonzero
+  pressure.update_freq_rising        6 |   0.5 | 50/285 nonzero
+  pressure.velocity_positive         8 |   3.1 | 127/285 nonzero
+  cross.kalshi_confirmation          6 |   1.5 | 74/285 nonzero
+  pressure.spread_tightening         6 |   2.7 | 127/285 nonzero
+  pressure.acceleration_positive     5 |   2.1 | 119/285 nonzero
+  pressure.liquidity_rising          5 |   2.4 | 150/285 nonzero
+  low_odds.recent_new_low            8 |   5.5 | 218/285 nonzero
+  low_odds.in_band                   5 |   5.0 | 285/285 nonzero
+
+caught wave: Marc Polmans | Mallorca Championships: Marc Polmans vs Grigor Dim (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Maria Timofeeva | Wimbledon, Qualification WTA: Maria Timofeeva vs H (PRE_SPIKE_CANDIDATE, wave +25.5p)
+
+caught wave: Teodora Kostovic | Wimbledon, Qualification WTA: Teodora Kostovic vs  (PRE_SPIKE_CANDIDATE, wave +17.0p)
+
+caught wave: Tatiana Prozorova | Wimbledon, Qualification WTA: Tatiana Prozorova vs (PRE_SPIKE_CANDIDATE, wave +5.5p)
+
+caught wave: Luciano Darderi | Mallorca Championships: Luciano Darderi vs Nuno Bo (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Adam Walton | Mallorca Championships: Adam Walton vs Alejandro D (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Zhuoxuan Bai | Wimbledon, Qualification WTA: Zhuoxuan Bai vs Tama (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Justina Mikulskyte | Wimbledon, Qualification WTA: Justina Mikulskyte v (PRE_SPIKE_CANDIDATE, wave +7.0p)
+
+caught wave: Damir Dzumhur | Mallorca Championships: Damir Dzumhur vs Vit Kopri (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Nicolas Mejia | Wimbledon, Qualification ATP: Nicolas Mejia vs Gus (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Jurak/Ruzic | Lexus Eastbourne Open (Doubles): Jurak/Ruzic vs Er (PRE_SPIKE_CANDIDATE, wave +12.0p)
+
+caught wave: Alexis Galarneau | Wimbledon, Qualification ATP: Alexis Galarneau vs  (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Vilius Gaubas | Wimbledon, Qualification ATP: Vilius Gaubas vs Dus (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Elena Pridankina | Wimbledon, Qualification WTA: Elena Pridankina vs  (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Gonzalo Villanueva | Piracicaba: Gonzalo Villanueva vs Thiago Seyboth W (PRE_SPIKE_CANDIDATE, wave +4.5p)
+
+caught wave: Jerome Kym | Wimbledon, Qualification ATP: Jerome Kym vs August (PRE_SPIKE_CANDIDATE, wave +7.0p)
+
+caught wave: Weronika Ewald | ITF Gdansk: Weronika Ewald vs Barbora Palicova (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Nuno Borges | Mallorca Championships: Nuno Borges vs Ethan Quinn (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Santiago De La Fuente | Piracicaba: Santiago De La Fuente vs Santiago Rodr (PRE_SPIKE_CANDIDATE, wave +19.5p)
+
+caught wave: Zsombor Piros | Wimbledon, Qualification ATP: Zsombor Piros vs Bil (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Kisa Yoshioka | ITF Taipei: Kisa Yoshioka vs Dayeon Back (NEW_LOW_WATCH, wave +45.5p)
+
+caught wave: Enzo Kohlmann de Freitas | Piracicaba: Enzo Kohlmann de Freitas vs Juan Manue (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Murphy Cassone | Mallorca Championships: Murphy Cassone vs Ethan Qu (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Marente Sijbesma | ITF Alkmaar: Marente Sijbesma vs Isis Louise Van D (NEW_LOW_WATCH, wave +46.5p)
+
+caught wave: Stefano Travaglia | Wimbledon, Qualification ATP: Stefano Travaglia vs (PRE_SPIKE_CANDIDATE, wave +7.0p)
+
+caught wave: Justas Trainauskas | ITF Brussels: Justas Trainauskas vs Olle Wallin (NEW_LOW_WATCH, wave +3.0p)
+
+caught wave: Hernan Casanova | Piracicaba: Hernan Casanova vs Eduardo Ribeiro (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Pietro Romeo Scomparin | ITF Bergamo: Pietro Romeo Scomparin vs Giovanni Or (FAST_MOVE, wave +11.5p)
+
+caught wave: Marcus Walters | ITF Kamen: Marcus Walters vs Michel Hopp (PRE_SPIKE_CANDIDATE, wave +30.5p)
+
+caught wave: Maria Lourdes Carle | Wimbledon, Qualification WTA: Maria Lourdes Carle  (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Miomir Kecmanovic | Mallorca Championships: Miomir Kecmanovic vs Fabia (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Zizou Bergs | Lexus Eastbourne Open: Zizou Bergs vs Ugo Humbert (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Maria Lourdes Carle | Wimbledon, Qualification WTA: Maria Lourdes Carle  (PRE_SPIKE_CANDIDATE, wave +20.0p)
+
+caught wave: Hugo Gaston | Wimbledon, Qualification ATP: Hugo Gaston vs Feder (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Emma Navarro | Bad Homburg Open: Emma Navarro vs Gabriela Ruse (PRE_SPIKE_CANDIDATE, wave +6.5p)
+
+caught wave: Clement Tabur | Wimbledon, Qualification ATP: Clement Tabur vs Shi (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Mariam Bolkvadze | Wimbledon, Qualification WTA: Mariam Bolkvadze vs  (PRE_SPIKE_CANDIDATE, wave +18.5p)
+
+caught wave: Tomasz Berkieta | Plovdiv: Tomasz Berkieta vs Tommaso Compagnucci (PRE_SPIKE_CANDIDATE, wave +13.5p)
+
+caught wave: Borna Gojo | Wimbledon, Qualification ATP: Borna Gojo vs Colton (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Dorian Tremblay | ITF Zagreb: Dorian Tremblay vs Javier Barranco Cos (PRE_SPIKE_CANDIDATE, wave +43.5p)
+
+caught wave: Oceane Dodin | Wimbledon, Qualification WTA: Oceane Dodin vs Mana (PRE_SPIKE_CANDIDATE_URGENT, wave +3.0p)
+
+caught wave: Ayumi Miyamoto | ITF Sapporo: Ayumi Miyamoto vs Gaeul Jang (PRE_SPIKE_CANDIDATE, wave +4.5p)
+
+caught wave: Luca Nardi | Wimbledon, Qualification ATP: Luca Nardi vs Otto V (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Matt Ponchet | ITF Bakio: Matt Ponchet vs Robin Bertrand (PRE_SPIKE_CANDIDATE, wave +36.5p)
+
+caught wave: Soon-Woo Kwon | Wimbledon, Qualification ATP: Soon-Woo Kwon vs Art (PRE_SPIKE_CANDIDATE, wave +7.5p)
+
+caught wave: Gabriel Diallo | Lexus Eastbourne Open: Gabriel Diallo vs Tomas Etc (PRE_SPIKE_CANDIDATE, wave +10.0p)
+
+caught wave: Daniel Dutra da Silva | Plovdiv: Daniel Dutra da Silva vs Petr Nesterov (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Aziz Dougaz | Wimbledon, Qualification ATP: Aziz Dougaz vs Rei S (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Jasmine Paolini | Lexus Eastbourne Open: Jasmine Paolini vs Tatjana  (PRE_SPIKE_CANDIDATE, wave +5.0p)
+
+caught wave: Andres Santamarta | Plovdiv: Andres Santamarta vs Enrico Dalla Valle (PRE_SPIKE_CANDIDATE, wave +8.5p)
+
+caught wave: Maddison Inglis | Wimbledon, Qualification WTA: Maddison Inglis vs L (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Alejandro Moro Canas | Wimbledon, Qualification ATP: Alejandro Moro Canas (PRE_SPIKE_CANDIDATE_URGENT, wave +7.5p)
+
+caught wave: Darja Semenistaja | Wimbledon, Qualification WTA: Darja Semenistaja vs (PRE_SPIKE_CANDIDATE, wave +11.0p)
+
+caught wave: Enola Chiesa | ITF Galati: Enola Chiesa vs Irina Fetecau (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Rebecca Sramkova | Wimbledon, Qualification WTA: Rebecca Sramkova vs  (PRE_SPIKE_CANDIDATE, wave +5.5p)
+
+caught wave: Sakura Hosogi | ITF Taipei: Sakura Hosogi vs Priska Madelyn Nugroh (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Daria Kuczer | ITF Gdansk: Daria Kuczer vs Elena Malygina (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Alejandro Moro Canas | Wimbledon, Qualification ATP: Alejandro Moro Canas (PRE_SPIKE_CANDIDATE, wave +6.0p)
+
+caught wave: Ayumi Miyamoto | ITF Sapporo: Ayumi Miyamoto vs Kanon Sawashiro (PRE_SPIKE_CANDIDATE, wave +3.5p)
+
+caught wave: Miguel Angel Machado | ITF Tanger: Miguel Angel Machado vs Yassine Dlimi (NEW_LOW_WATCH, wave +5.0p)
+
+caught wave: Fausto Tabacco | ITF Bergamo: Fausto Tabacco vs Federico Arnaboldi (FAST_MOVE, wave +21.0p)
+
+caught wave: Miho Kuramochi | ITF Sapporo: Miho Kuramochi vs Ayumi Miyamoto (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Kuai Jiananxi | ITF Maanshan: Kuai Jiananxi vs Onyu Choi (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Onyu Choi | ITF Maanshan: Onyu Choi vs Chenting Zhu (PRE_SPIKE_CANDIDATE, wave +9.0p)
+
+caught wave: Naomi Osaka | Bad Homburg Open: Naomi Osaka vs Ekaterina Alexand (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Pieter De Lange | ITF Alkmaar: Pieter De Lange vs Marc Majdandzic (PRE_SPIKE_CANDIDATE, wave +4.5p)
+
+caught wave: Stefanos Tsitsipas | Mallorca Championships: Stefanos Tsitsipas vs Igna (PRE_SPIKE_CANDIDATE, wave +4.0p)
+
+caught wave: Polina Iatcenko | Wimbledon, Qualification WTA: Polina Iatcenko vs Z (PRE_SPIKE_CANDIDATE, wave +3.0p)
+
+caught wave: Dillon Beckles | ITF Tanger: Dillon Beckles vs Lorenzo Rottoli (NEW_LOW_WATCH, wave +6.0p)
+false alarms (pre-match alert, no wave): 164
+  Hayu Kinoshita | Wimbledon, Qualification WTA: Hayu Kinoshita vs Vi (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Xiaodi You | Wimbledon, Qualification WTA: Xiaodi You vs Leolia (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Camila Romero | ITF Asuncion: Camila Romero vs Justina Gonzalez Da (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Antonia Ruzic | Lexus Eastbourne Open: Antonia Ruzic vs Petra Marc (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Lukas Neumayer | Wimbledon, Qualification ATP: Lukas Neumayer vs Du (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Fadi Bidan | ITF Brussels: Fadi Bidan vs Dylan Dietrich (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Kimberly Birrell | Lexus Eastbourne Open: Kimberly Birrell vs Barbora (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Vitaliy Sachko | Wimbledon, Qualification ATP: Vitaliy Sachko vs Sh (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Jan-Lennard Struff | Mallorca Championships: Jan-Lennard Struff vs Mart (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Hannah Klugman | Lexus Eastbourne Open: Hannah Klugman vs Tereza Va (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Julia Riera | Wimbledon, Qualification WTA: Julia Riera vs Fiona (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Carles Rojas | ITF Bakio: Carles Rojas vs Sergio Callejon Hernand (NEW_LOW_WATCH, label=insufficient_history, wave +0.0p)
+  Matthew Dellavedova | ITF Wuning: Matthew Dellavedova vs Max Purcell (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Andres Andrade | Wimbledon, Qualification ATP: Andres Andrade vs Co (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Karolina Muchova | Bad Homburg Open: Karolina Muchova vs Naomi Osaka (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Marco Cecchinato | Wimbledon, Qualification ATP: Marco Cecchinato vs  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Luis Felipe Miguel | Piracicaba: Luis Felipe Miguel vs Thiago Seyboth W (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Jeremy Schifris | ITF Slovenska Bistrica: Jeremy Schifris vs Jeremy  (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Luca Castelnuovo | Targu Mures: Luca Castelnuovo vs Franco Agamenone (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Deren Yigin | ITF Kursumlijska Banja: Deren Yigin vs Samir Hamza (NEW_LOW_WATCH, label=small_move, wave +1.6p)
+  Guy Den Ouden | Wimbledon, Qualification ATP: Guy Den Ouden vs Yi  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Berta Bonardi | ITF Palma Del Rio: Berta Bonardi vs Carolyn Ansari (NEW_LOW_WATCH, label=small_move, wave +2.5p)
+  Alana Subasic | ITF Kayseri: Alana Subasic vs Duru Soke (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Anna-Lena Friedsam | Wimbledon, Qualification WTA: Anna-Lena Friedsam v (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Lily Fairclough | ITF Rome: Lily Fairclough vs Ayana Akli (NEW_LOW_WATCH, label=small_move, wave +2.0p)
+  Dane Sweeny | Wimbledon, Qualification ATP: Dane Sweeny vs Darwi (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Harmony Tan | Wimbledon, Qualification WTA: Harmony Tan vs Mia P (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Tereza Valentova | Lexus Eastbourne Open: Tereza Valentova vs Ajla To (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Kayla Cross | Wimbledon, Qualification WTA: Kayla Cross vs Mary  (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Remy Bertola | Wimbledon, Qualification ATP: Remy Bertola vs Juri (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Jannik Soetebier | ITF Kamen: Jannik Soetebier vs Benito Sanchez Mart (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Yui Ohwaki | ITF Sapporo: Yui Ohwaki vs Stefani Webb (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Oliver Tarvet | Wimbledon, Qualification ATP: Oliver Tarvet vs Ale (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Thiago Agustin Tirante | Lexus Eastbourne Open: Thiago Agustin Tirante vs J (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Ethan Quinn | Mallorca Championships: Ethan Quinn vs Alejandro D (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Eero Vasa | Plovdiv: Eero Vasa vs Manoj Dhamne Manas (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Lina Gjorcheska | Wimbledon, Qualification WTA: Lina Gjorcheska vs L (PRE_SPIKE_CANDIDATE_URGENT, label=small_move, wave +2.5p)
+  Joel Schwaerzler | Wimbledon, Qualification ATP: Joel Schwaerzler vs  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Despina Papamichail | Wimbledon, Qualification WTA: Despina Papamichail  (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Matej Dodig | Wimbledon, Qualification ATP: Matej Dodig vs Frede (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Nicolas Mejia | Wimbledon, Qualification ATP: Nicolas Mejia vs Tri (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Nav Dayal | ITF Claremont: Nav Dayal vs Kenta Miyoshi (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Benito Sanchez Martinez | ITF Kamen: Benito Sanchez Martinez vs Oleksii Krut (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Fabian Marozsan | Mallorca Championships: Fabian Marozsan vs Alejand (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Maya Joint | Lexus Eastbourne Open: Maya Joint vs Emiliana Aran (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Matthew William Donald | ITF Bergamo: Matthew William Donald vs Fausto Taba (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  McCartney Kessler | Lexus Eastbourne Open: McCartney Kessler vs Madiso (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Nina Radovanovic | ITF Kursumlijska Banja: Nina Radovanovic vs Adithy (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Qinwen Zheng | Bad Homburg Open: Qinwen Zheng vs Clara Tauson (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Natalia Sousa Salazar | ITF Monastir: Natalia Sousa Salazar vs Lourdes Aya (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Iryna Shymanovich | Wimbledon, Qualification WTA: Iryna Shymanovich vs (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Ibrahim Snoussi | ITF Monastir: Ibrahim Snoussi vs Ali Habib (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Tatjana Maria | Lexus Eastbourne Open: Tatjana Maria vs Tereza Val (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Gabriela Ruse | Bad Homburg Open: Gabriela Ruse vs Karolina Muchov (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Stefano Napolitano | Wimbledon, Qualification ATP: Stefano Napolitano v (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Alice Rame | Wimbledon, Qualification WTA: Alice Rame vs Caroli (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Adam Walton | Mallorca Championships: Adam Walton vs Nick Kyrgio (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Lorenzo Sonego | Mallorca Championships: Lorenzo Sonego vs Miomir K (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Alexandra Eala | Bad Homburg Open: Alexandra Eala vs Elise Mertens (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Daniel Evans | Wimbledon, Qualification ATP: Daniel Evans vs Tris (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Uros Zivkovic | ITF Kursumlijska Banja: Uros Zivkovic vs Francisco (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Kaichi Uchida | Wimbledon, Qualification ATP: Kaichi Uchida vs Ber (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Louis Allen | ITF Monastir: Louis Allen vs Isaac Becroft (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Jessica Bouzas Maneiro | Lexus Eastbourne Open: Jessica Bouzas Maneiro vs M (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Maya Iyengar | ITF Rome: Maya Iyengar vs Amelia Honer (NEW_LOW_WATCH, label=flat, wave +0.5p)
+  Henry Wilson | ITF Claremont: Henry Wilson vs Bryce Nakashima (NEW_LOW_WATCH, label=small_move, wave +1.1p)
+  Vit Kopriva | Mallorca Championships: Vit Kopriva vs Ignacio Bus (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Ella McDonald | Wimbledon, Qualification WTA: Ella McDonald vs Elv (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Fabian Marozsan | Mallorca Championships: Fabian Marozsan vs Alejand (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Vilius Gaubas | Wimbledon, Qualification ATP: Vilius Gaubas vs Mic (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Andres Santamarta | Plovdiv: Andres Santamarta vs Inaki Montes (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Varvara Lepchenko | Wimbledon, Qualification WTA: Varvara Lepchenko vs (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Jan-Lennard Struff | Mallorca Championships: Jan-Lennard Struff vs Nuno (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Jan Choinski | Lexus Eastbourne Open: Jan Choinski vs Alexei Popy (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Minel Naz Kaynak | ITF Kayseri: Minel Naz Kaynak vs Deniz Dilek (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Alexander Frusina | ITF Monastir: Alexander Frusina vs Roger Pascual F (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Ann Li | Bad Homburg Open: Ann Li vs Ekaterina Alexandrova (PRE_SPIKE_CANDIDATE, label=flat, wave +0.0p)
+  Hiroko Kuwata | ITF Rome: Hiroko Kuwata vs Tatum Evans (NEW_LOW_WATCH, label=flat, wave +1.0p)
+  Katarzyna Kawa | Wimbledon, Qualification WTA: Katarzyna Kawa vs Ka (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Dong Ju Kim | ITF Wuning: Dong Ju Kim vs Max Purcell (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  McCartney Kessler | Lexus Eastbourne Open: McCartney Kessler vs Daria  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Natsuho Arakawa | ITF Sapporo: Natsuho Arakawa vs Mayuka Aikawa (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Corentin Moutet | Mallorca Championships: Corentin Moutet vs Marton  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Paulo Dos Santos | Piracicaba: Paulo Dos Santos vs Matheus Pucinelli  (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Alyssa Ahn | ITF Claremont: Alyssa Ahn vs Midori Castillo Meza (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Gilles Arnaud Bailly | Wimbledon, Qualification ATP: Gilles Arnaud Bailly (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Roman Andres Burruchaga | Lexus Eastbourne Open: Roman Andres Burruchaga vs  (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Estella Jaeger | ITF Alkmaar: Estella Jaeger vs Merel Hoedt (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Sascha Gueymard-Wayenburg | Targu Mures: Sascha Gueymard-Wayenburg vs Max Alca (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Venus Williams | Bad Homburg Open: Venus Williams vs Irina-Camelia  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Mathys Picard | ITF Monastir: Mathys Picard vs Roger Pascual Ferra (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Oliver Crawford | Wimbledon, Qualification ATP: Oliver Crawford vs J (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Panna Udvardy | Lexus Eastbourne Open: Panna Udvardy vs Anna Bonda (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Fumin Jiang | ITF Kayseri: Fumin Jiang vs Kerem Yilmaz (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Tinatini Mtvarelishvili | ITF Monastir: Tinatini Mtvarelishvili vs Karla Bar (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Alice Tubello | Wimbledon, Qualification WTA: Alice Tubello vs Ele (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Alicia Dudeney | Lexus Eastbourne Open: Alicia Dudeney vs Jessica B (PRE_SPIKE_CANDIDATE, label=flat, wave +0.0p)
+  Raul Brancaccio | Wimbledon, Qualification ATP: Raul Brancaccio vs A (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Duru Soke | ITF Kayseri: Duru Soke vs Lan Mi (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Radu Albot | Targu Mures: Radu Albot vs Duje Ajdukovic (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Harmony Tan | Wimbledon, Qualification WTA: Harmony Tan vs Tyra  (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Charlotte Narti | ITF Alkmaar: Charlotte Narti vs Margaux Maquet (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Paul Jubb | Wimbledon, Qualification ATP: Paul Jubb vs Tomas B (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Marko Topo | Targu Mures: Marko Topo vs Martin Krumich (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Tim Handel | ITF Brussels: Tim Handel vs Samuele Pieri (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Carole Monnet | Wimbledon, Qualification WTA: Carole Monnet vs Tat (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Eva Lys | Bad Homburg Open: Eva Lys vs Emma Navarro (PRE_SPIKE_CANDIDATE, label=flat, wave +0.0p)
+  Alexander Frusina | ITF Monastir: Alexander Frusina vs Liam Branger (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Jaeda Daniel | ITF Rome: Jaeda Daniel vs Jo-Yee Chan (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Sarah Rakotomanga | Wimbledon, Qualification WTA: Sarah Rakotomanga vs (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Paola Lopez | ITF Claremont: Paola Lopez vs Salma Ewing (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Livia Keller | ITF Monastir: Livia Keller vs Lourdes Ayala (NEW_LOW_WATCH, label=flat, wave +1.0p)
+  Vilius Gaubas | Wimbledon, Qualification ATP: Vilius Gaubas vs Hen (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Katarzyna Kawa | Wimbledon, Qualification WTA: Katarzyna Kawa vs Su (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
+  Ilia Simakin | Targu Mures: Ilia Simakin vs Marko Topo (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Max Basing | Wimbledon, Qualification ATP: Max Basing vs Remy B (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Justina Mikulskyte | Wimbledon, Qualification WTA: Justina Mikulskyte v (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Brandon Nakashima | Lexus Eastbourne Open: Brandon Nakashima vs Jack D (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Andrea Guerrieri | Wimbledon, Qualification ATP: Andrea Guerrieri vs  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Laslo Djere | Wimbledon, Qualification ATP: Laslo Djere vs Micha (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Oskar Grzegorzewski | ITF Rzeszow: Oskar Grzegorzewski vs Marcel Kamrows (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Grigor Dimitrov | Mallorca Championships: Grigor Dimitrov vs Alejand (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Liam Broady | Wimbledon, Qualification ATP: Liam Broady vs Augus (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Miomir Kecmanovic | Mallorca Championships: Miomir Kecmanovic vs Hamad (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Talia Gibson | Lexus Eastbourne Open: Talia Gibson vs Madison Key (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Laura Pigossi | Wimbledon, Qualification WTA: Laura Pigossi vs Oce (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Rio Noguchi | Wimbledon, Qualification ATP: Rio Noguchi vs Luca  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Tatjana Maria | Lexus Eastbourne Open: Tatjana Maria vs Madison Ke (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Jan Facek | ITF Zagreb: Jan Facek vs Kalin Ivanovski (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Mariam Bolkvadze | Wimbledon, Qualification WTA: Mariam Bolkvadze vs  (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Yuriko Miyazaki | Wimbledon, Qualification WTA: Yuriko Miyazaki vs E (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.5p)
+  Naomi Osaka | Bad Homburg Open: Naomi Osaka vs Elise Mertens (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Anton Matusevich | Wimbledon, Qualification ATP: Anton Matusevich vs  (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Esther Adeshina | Wimbledon, Qualification WTA: Esther Adeshina vs H (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Gabriel Diallo | Lexus Eastbourne Open: Gabriel Diallo vs Terence A (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Lola Radivojevic | Wimbledon, Qualification WTA: Lola Radivojevic vs  (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Xinyu Wang | Bad Homburg Open: Xinyu Wang vs Elina Svitolina (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Juan Carlos Prado | Wimbledon, Qualification ATP: Juan Carlos Prado vs (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Mackenzie McDonald | Wimbledon, Qualification ATP: Mackenzie McDonald v (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Thiago Cigarran | Piracicaba: Thiago Cigarran vs Santiago Rodriguez  (PRE_SPIKE_CANDIDATE, label=flat, wave +1.0p)
+  Aljaz Jeran | ITF Slovenska Bistrica: Aljaz Jeran vs Bor Artnak (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Federico Agustin Gomez | Wimbledon, Qualification ATP: Federico Agustin Gom (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Gabriela Ruse | Bad Homburg Open: Gabriela Ruse vs Linda Noskova (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Liam Draxl | Wimbledon, Qualification ATP: Liam Draxl vs Remy B (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Bernard Tomic | Wimbledon, Qualification ATP: Bernard Tomic vs Chr (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Joanna Garland | Wimbledon, Qualification WTA: Joanna Garland vs Ty (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Lorenzo Berto | ITF Bergamo: Lorenzo Berto vs Manuel Plunger (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Benjamin O'connell | ITF Claremont: Benjamin O'connell vs Nicholas Gods (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Aliaksandra Sasnovich | Wimbledon, Qualification WTA: Aliaksandra Sasnovic (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Daniil Glinka | Wimbledon, Qualification ATP: Daniil Glinka vs Kim (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Erika Andreeva | Wimbledon, Qualification WTA: Erika Andreeva vs Ka (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Henri Squire | Wimbledon, Qualification ATP: Henri Squire vs Mich (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Luisina Giovannini | Wimbledon, Qualification WTA: Luisina Giovannini v (PRE_SPIKE_CANDIDATE, label=small_move, wave +2.0p)
+  Niels McDonald | Targu Mures: Niels McDonald vs Francesco Passaro (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Sinja Kraus | Bad Homburg Open: Sinja Kraus vs Anna Kalinskaya (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Sammy Guinau | ITF Alkmaar: Sammy Guinau vs Alexander Maarten San (NEW_LOW_WATCH, label=flat, wave +0.0p)
+  Dane Sweeny | Wimbledon, Qualification ATP: Dane Sweeny vs Tomas (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Yanaki Milev | Plovdiv: Yanaki Milev vs Ognjen Milic (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Coleman Wong | Wimbledon, Qualification ATP: Coleman Wong vs Born (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Gauthier Onclin | Wimbledon, Qualification ATP: Gauthier Onclin vs S (PRE_SPIKE_CANDIDATE, label=small_move, wave +3.0p)
+  Solana Sierra | Bad Homburg Open: Solana Sierra vs Qinwen Zheng (PRE_SPIKE_CANDIDATE, label=insufficient_history, wave +0.0p)
+  Jan Choinski | Lexus Eastbourne Open: Jan Choinski vs Zizou Bergs (PRE_SPIKE_CANDIDATE, label=flat, wave +0.5p)
+  Eero Vasa | Plovdiv: Eero Vasa vs Ognjen Milic (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.0p)
+  Kaitlin Quevedo | Wimbledon, Qualification WTA: Kaitlin Quevedo vs C (PRE_SPIKE_CANDIDATE, label=small_move, wave +1.5p)
