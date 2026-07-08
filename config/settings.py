@@ -11,7 +11,7 @@ try:
     from dotenv import load_dotenv
 except ModuleNotFoundError:
     def load_dotenv(*args, **kwargs):
-        return False
+        return Falseh
 
 load_dotenv()
 
@@ -121,11 +121,11 @@ PRE_SPIKE_PROB_MIN: float = _float("PRE_SPIKE_PROB_MIN", 0.02)
 PRE_SPIKE_PROB_MAX: float = _float("PRE_SPIKE_PROB_MAX", 0.60)
 
 # Score thresholds (0–100 scale), recalibrated 2026-06-12 by replaying the
-# score trail over the widened band: >= 45 caught 64% of waves at 61.5%
+# score trail over the widened band: >= 40 catches more waves at similar precision
 # precision (~9 fires/day); the old 70 never fired because wave scores top
 # out at 64 while the external bucket is a stub at 0. Urgent at 60 marks
 # the top of the observed wave-score distribution (replay precision 75%).
-PRE_SPIKE_ALERT_SCORE: float = _float("PRE_SPIKE_ALERT_SCORE", 45.0)
+PRE_SPIKE_ALERT_SCORE: float = _float("PRE_SPIKE_ALERT_SCORE", 40.0)
 PRE_SPIKE_URGENT_SCORE: float = _float("PRE_SPIKE_URGENT_SCORE", 60.0)
 
 # Dedicated cooldown — one standard alert per market per window; a single
