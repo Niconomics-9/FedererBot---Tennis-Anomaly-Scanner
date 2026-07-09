@@ -1,0 +1,156 @@
+TennisBot daily report — generated 2026-07-09 07:50 (local)
+
+##############################################################################
+# analyze_alert_outcomes.py
+##############################################################################
+
+======================================================================================
+Alert outcomes by type — forward window 30 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAVORITE_RECOVERY               25    +0.00p    +0.50p    0%    0%    +0.00p   (1 pending)
+NEW_LOW_WATCH                   29    +0.00p    +0.50p    0%    0%    +0.00p   (3 pending)
+PRE_SPIKE_CANDIDATE            338    +0.00p    +2.50p    0%    0%    +0.00p   (65 pending)
+PRE_SPIKE_CANDIDATE_URGENT       4    +0.00p    +0.00p    0%    0%    +0.00p   (4 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 60 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAVORITE_RECOVERY               25    +0.00p    +0.50p    0%    0%    +0.00p   (1 pending)
+NEW_LOW_WATCH                   29    +0.00p    +0.50p    0%    0%    +0.00p   (3 pending)
+PRE_SPIKE_CANDIDATE            341    +0.00p    +4.00p    0%    0%    +0.00p   (62 pending)
+PRE_SPIKE_CANDIDATE_URGENT       4    +0.00p    +0.00p    0%    0%    +0.00p   (4 pending)
+
+======================================================================================
+Alert outcomes by type — forward window 120 min (peak = best rideable move from alert price)
+======================================================================================
+type                             n  med peak  max peak >=3pp >=5pp   med dip
+FAVORITE_RECOVERY               26    +0.00p    +2.00p    0%    0%    +0.00p
+NEW_LOW_WATCH                   29    +0.00p    +4.00p    3%    0%    +0.00p   (3 pending)
+PRE_SPIKE_CANDIDATE            352    +0.00p   +42.50p    1%    1%    +0.00p   (51 pending)
+PRE_SPIKE_CANDIDATE_URGENT       6    +0.00p    +4.00p   17%    0%    -0.45p   (2 pending)
+
+======================================================================================
+Pre-match vs in-play at alert time — forward window 60 min
+======================================================================================
+phase            n  med peak >=3pp >=5pp   med dip
+pre_match      399    +0.00p    0%    0%    +0.00p
+in_play          0
+unknown          0
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_alert_outcomes.py:57: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# analyze_pre_spike.py
+##############################################################################
+
+========================================================================
+Score buckets — hit = forward move >= +3 pp within 60 min
+========================================================================
+bucket          n   hits  hit-rate  median mv60   max mv60
+0-40       351883   2792       1%       +0.00pp    +89.00pp   (902890 pending)
+40-55        9579    499       5%       +0.00pp    +66.50pp   (15642 pending)
+55-70         270      9       3%       +0.00pp    +23.50pp   (340 pending)
+70-85           0      -         -            -          -   (1 pending)
+85-100          0      -         -            -          -
+
+========================================================================
+Component signal — avg points among hits (n=3300) vs misses (n=358432)
+========================================================================
+component                            avg hit  avg miss    edge
+cross.kalshi_confirmation               0.04      0.00   +0.04
+external.momentum                       0.00      0.00   +0.00
+low_odds.coiled_turning_up              0.72      0.56   +0.16
+low_odds.in_band                        4.24      4.85   -0.61
+low_odds.recent_new_low                 4.58      5.95   -1.37
+pressure.acceleration_positive          1.82      0.58   +1.24
+pressure.liquidity_rising               0.71      0.67   +0.04
+pressure.spread_tightening              2.03      0.95   +1.08
+pressure.sustained_move                 2.75      0.68   +2.06
+pressure.update_freq_rising             0.15      0.01   +0.14
+pressure.velocity_positive              2.50      0.71   +1.79
+pressure.volume_surge                   4.94      0.76   +4.18
+
+[stderr / exit 0]
+/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_pre_spike.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now_iso = datetime.utcnow().isoformat()
+
+##############################################################################
+# backtest_match_waves.py
+##############################################################################
+
+======================================================================================
+Saved data inventory — snapshots from 2026-07-01T21:12:13.360330 to 2026-07-08T21:08:12.882299 (UTC)
+======================================================================================
+source        snapshots  matches   series
+polymarket      641,873   26,153   26,242
+kalshi           78,872    4,498    4,498
+alerts sent: 1537  |  score_history rows: 1,280,605
+
+======================================================================================
+Backtest universe — Polymarket match-winner series with a known start time
+======================================================================================
+series found: 1663  (completed 1578, upcoming 85)
+skipped: 24579 prop/future/unknown series, 0 match-winner series without start time
+completed but insufficient_history: 255
+
+======================================================================================
+Would it have worked? — best pre-match entry->peak move, 1323 series
+(worked = wave >= +3 pp; entry >= 10 min before start)
+======================================================================================
+label                       n   share  med wave  med entry lead
+wave_5pp                  333   25.2%   +17.50p          1329m
+wave_3pp                  139   10.5%    +4.00p           873m
+small_move                437   33.0%    +1.50p           870m
+flat                      414   31.3%    +0.50p           619m
+
+would have worked: 472/1323 series (35.7%) — 472/1320 distinct matches (35.8%)
+
+--------------------------------------------------------------------------------------
+By entry band (belief 3: are 30-60% entries pulling their weight?)
+band            n  worked    rate  med wave   med dip
+2-12%          47      13   27.7%    +1.00p    +0.00p
+12-30%        182      51   28.0%    +1.50p    +0.00p
+30-60%        783     316   40.4%    +2.00p    +0.00p
+60%+          311      92   29.6%    +1.50p    +0.00p
+
+--------------------------------------------------------------------------------------
+Wave timing (worked series) — how far before the start do waves begin/peak?
+entry lead: median 1114 min (IQR 738-2157 min before start)
+peak lead: median 543 min (IQR 181-1103 min before start)
+
+--------------------------------------------------------------------------------------
+Did the live bot catch them? (pre-match alerts on this series)
+waves caught: 118/472 (25.0% recall)
+pre-match alerts on completed series: 256, of which on waves: 118 (46.1% precision)
+
+--------------------------------------------------------------------------------------
+watch_score replay — max pre-match PRE_SPIKE score, 1271 series with scores
+median max score — waves: 43, non-waves: 39
+threshold sweep (472 wave series have score history; live alert threshold is 45):
+threshold   fired   hit  precision   recall
+>= 30        1123   443     39.4%   93.9%
+>= 40         717   322     44.9%   68.2%
+>= 50         217   103     47.5%   21.8%
+>= 60          12     5     41.7%    1.1%
+>= 45         493   231     46.9%   48.9%
+
+Per-series dataset written to /home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/reports/match_waves_2026-07-09.csv
+
+##############################################################################
+# analyze_missed_waves.py
+##############################################################################
+
+[stderr / exit 1]
+Traceback (most recent call last):
+  File "/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/analyze_missed_waves.py", line 30, in <module>
+    from config import settings
+  File "/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/config/settings.py", line 55, in <module>
+    SUPABASE_DB_URL: str = _require("SUPABASE_DB_URL")
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/config/settings.py", line 23, in _require
+    raise EnvironmentError(
+OSError: Required environment variable 'SUPABASE_DB_URL' is not set. Check your .env file.
