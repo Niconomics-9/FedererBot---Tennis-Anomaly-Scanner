@@ -8,7 +8,7 @@ import logging
 from datetime import datetime
 
 from market_providers.models import MarketSnapshot, MarketStats
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 logger = logging.getLogger(__name__)
 

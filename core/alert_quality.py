@@ -11,7 +11,7 @@ from datetime import datetime
 from config import settings
 from core import market_classifier
 from market_providers.models import AnomalyType, MarketSnapshot
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 
 @dataclass(frozen=True)
