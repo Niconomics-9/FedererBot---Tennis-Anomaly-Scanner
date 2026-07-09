@@ -18,7 +18,7 @@ from core import scanner
 from market_providers.base_provider import BaseProvider
 from market_providers.kalshi_provider import KalshiProvider
 from market_providers.polymarket_provider import PolymarketProvider
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 # ── logging ───────────────────────────────────────────────────────────────────
 

@@ -35,7 +35,7 @@ for noisy in ("urllib3",):
 
 from core import anomaly_engine, pre_spike_engine
 from market_providers.models import AlertRecord, AnomalyType, MarketSnapshot
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 try:
     from alerts import discord_alerts

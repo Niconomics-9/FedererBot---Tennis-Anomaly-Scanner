@@ -31,7 +31,7 @@ os.environ["ALERT_REQUIRE_START_TIME"] = "true"
 
 from core import anomaly_engine, market_classifier
 from market_providers.models import AlertRecord, AnomalyType, MarketSnapshot
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 PASS = 0
 FAIL = 0
