@@ -1,8 +1,9 @@
 # Tennis Prediction Market Anomaly Scanner
 
-A local Python bot that monitors tennis prediction markets (Polymarket, Kalshi),
-stores a full microstructure history in SQLite, computes market signals every
-cycle, and fires Discord alerts when unusual probability movements are detected.
+A Python bot that monitors tennis prediction markets (Polymarket, Kalshi),
+stores a full microstructure history in Supabase Postgres, computes market
+signals every cycle, and fires Discord alerts when unusual probability
+movements are detected.
 
 **Alerting and data collection only. No bets. No trades. No wallet integration.**
 
@@ -44,7 +45,11 @@ main.py                          Entry point — polling loop + provider setup
 │   └── pre_spike_engine.py      Scores low-odds candidates before a spike
 │
 ├── storage/
-│   └── sqlite_storage.py        All SQLite reads, writes, and safe migrations
+│   ├── supabase_storage.py      All Postgres reads/writes (psycopg2, one shared connection)
+│   ├── schema.sql               Table definitions (applied once as a Supabase migration)
+│   ├── report_db.py             Read-only access used by the analyzer scripts
+│   ├── verify_env.py            Throwaway-schema scaffolding for verify_* scripts
+│   └── sqlite_storage.py        Legacy SQLite layer (kept for reference)
 │
 ├── alerts/
 │   └── discord_alerts.py        Formats and sends Discord webhook messages
@@ -179,6 +184,11 @@ still collected for every market, but alerts pass through these gates first:
 
 ## Database Schema
 
+Postgres, in the shared Supabase project (`storage/schema.sql`). Timestamps
+are TIMESTAMPTZ; the storage layer pins the session to UTC and converts reads
+back to the codebase's naive-UTC convention. `score_history.components` is
+JSONB. Summary:
+
 ```sql
 market_snapshots
   id, market_id, match_name, player_name, source, probability, market_url,
@@ -206,8 +216,8 @@ alerts_sent
   prev_prob, curr_prob, sent_at, match_key
 ```
 
-Migration is safe: the init_db() function uses PRAGMA table_info to add
-missing columns to existing databases without data loss.
+Schema changes go through Supabase migrations (`apply_migration`) — init_db()
+only verifies the connection and runs the startup prunes.
 
 ---
 
@@ -219,9 +229,13 @@ python -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 copy .env.example .env
-# fill in DISCORD_WEBHOOK_URL at minimum
+# fill in DISCORD_WEBHOOK_URL and SUPABASE_DB_URL (Session pooler string) at minimum
 python main.py
 ```
+
+Tables must exist in the Supabase project first — `storage/schema.sql` is
+applied once as the `federerbot_initial_schema` migration (already done for
+the live project).
 
 ## Demo Mode (no API keys needed)
 
@@ -256,10 +270,14 @@ real outcomes instead of guesses.
 ## Verification
 
 ```bash
-python verify_alert_quality.py   # throwaway DB, no Discord import/send
-python verify_pre_spike.py       # throwaway DB, Discord preview optional
-python analyze_pre_spike.py      # read-only report against tennis_scanner.db
+python verify_alert_quality.py   # throwaway Postgres schema, no Discord import/send
+python verify_pre_spike.py       # throwaway Postgres schema, Discord preview optional
+python analyze_pre_spike.py      # read-only report against the live database
 ```
+
+All three need `SUPABASE_DB_URL` (env or `.env`). The verify scripts create a
+disposable `verify_<hex>` schema on that database and drop it afterwards —
+live tables are never touched; the analyzers connect read-only.
 
 ---
 

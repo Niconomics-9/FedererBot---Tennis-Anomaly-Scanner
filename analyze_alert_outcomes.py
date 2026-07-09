@@ -16,20 +16,20 @@ Report sections
    evidence for the pre-match-only strategy. Alerts sent before 2026-06-11
    predate start-time capture and show as "unknown".
 
-Standalone on purpose: opens the database read-only via sqlite URI and does
-not import project modules, so it needs no .env and can never write.
+Read-only on purpose: the connection is opened with
+default_transaction_read_only=on, so this script can never write.
 
 Usage:
-    python analyze_alert_outcomes.py [path\\to\\tennis_scanner.db]
-    (default: DB_PATH env var, else tennis_scanner.db in the cwd)
+    python analyze_alert_outcomes.py [postgres-connection-url]
+    (default: SUPABASE_DB_URL env var, or .env)
 """
 
-import os
-import sqlite3
 import statistics
 import sys
 from bisect import bisect_right
 from datetime import datetime, timedelta
+
+from storage.report_db import connect_readonly, rows
 
 # Windows consoles may default to cp1252, which cannot print the dividers.
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -39,17 +39,9 @@ WAVE_LEVELS = (0.03, 0.05)      # +3 pp / +5 pp forward moves worth reporting
 
 
 def main() -> int:
-    db_path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("DB_PATH", "tennis_scanner.db")
-    if not os.path.exists(db_path):
-        print(f"Database not found: {db_path}")
-        return 1
+    conn = connect_readonly(sys.argv[1] if len(sys.argv) > 1 else None)
 
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    conn.row_factory = sqlite3.Row
-
-    alerts = conn.execute(
-        "SELECT * FROM alerts_sent ORDER BY sent_at"
-    ).fetchall()
+    alerts = rows(conn, "SELECT * FROM alerts_sent ORDER BY sent_at")
     if not alerts:
         print("alerts_sent is empty — let the scanner run first.")
         return 0
@@ -58,14 +50,15 @@ def main() -> int:
     results: list[dict] = []
     for alert in alerts:
         key = (alert["market_id"], alert["player_name"], alert["source"])
-        snaps = conn.execute(
+        snaps = rows(
+            conn,
             """
             SELECT probability, timestamp, match_start_time FROM market_snapshots
-            WHERE market_id = ? AND player_name = ? AND source = ?
+            WHERE market_id = %s AND player_name = %s AND source = %s
             ORDER BY timestamp
             """,
             key,
-        ).fetchall()
+        )
         if not snaps:
             continue
         timestamps = [s["timestamp"] for s in snaps]
@@ -96,7 +89,7 @@ def main() -> int:
     return 0
 
 
-def _phase(snaps: list[sqlite3.Row], sent_at: str) -> str:
+def _phase(snaps: list[dict], sent_at: str) -> str:
     """pre_match / in_play / unknown at alert time, from the latest snapshot
     at or before the alert that carries a match_start_time."""
     start = None

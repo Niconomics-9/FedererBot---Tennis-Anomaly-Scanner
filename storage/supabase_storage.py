@@ -53,9 +53,13 @@ def _connect() -> psycopg2.extensions.connection:
     """
     global _conn
     if _conn is None or _conn.closed:
+        options = "-c timezone=utc"
+        if settings.SUPABASE_SCHEMA:
+            # Applied at connect time so reconnects keep the override too.
+            options += f" -c search_path={settings.SUPABASE_SCHEMA}"
         _conn = psycopg2.connect(
             settings.SUPABASE_DB_URL,
-            options="-c timezone=utc",
+            options=options,
         )
         _conn.autocommit = False
     return _conn

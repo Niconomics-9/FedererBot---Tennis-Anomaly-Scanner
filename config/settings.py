@@ -49,10 +49,16 @@ def _bool(key: str, default: bool) -> bool:
 
 DISCORD_WEBHOOK_URL: str = _require("DISCORD_WEBHOOK_URL")
 
-# Supabase Postgres connection string (Session mode, port 5432).
-# Dashboard -> Settings -> Database -> Connection string.
-# Required: the bot fails loudly at startup if missing.
+# Supabase Postgres connection string. Use the SESSION POOLER string
+# (Dashboard -> Connect -> Session pooler): the direct db.<ref>.supabase.co
+# host is IPv6-only and unreachable from IPv4-only hosts such as GitHub
+# Actions runners. Required: the bot fails loudly at startup if missing.
 SUPABASE_DB_URL: str = _require("SUPABASE_DB_URL")
+
+# Optional Postgres schema override (empty = default search_path, i.e.
+# public). The verify_* scripts point this at a disposable schema so they
+# never touch live data; normal runs leave it unset.
+SUPABASE_SCHEMA: str = os.getenv("SUPABASE_SCHEMA", "")
 
 # ── Provider API keys (optional per-provider) ─────────────────────────────────
 

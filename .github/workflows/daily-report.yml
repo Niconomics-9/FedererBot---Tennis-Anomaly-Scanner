@@ -1,12 +1,17 @@
 # Daily report — same routine as the local "TennisBot Daily Report" task.
 #
-# Restores the database from the Actions cache, runs the three read-only
-# analyzers via run_daily_report.py, commits the dated report + match_waves
-# CSV to the repo (readable from anywhere), and uploads a gzipped database
-# backup as a 30-day artifact in case the cache is ever evicted.
+# Runs the read-only analyzers against the Supabase Postgres database via
+# run_daily_report.py and commits the dated report + match_waves CSV to the
+# repo (readable from anywhere). Supabase is the durable store, so there is
+# no database cache to restore or artifact to back up anymore.
 #
 # The daily commit also keeps the repository "active", which prevents GitHub
 # from auto-disabling scheduled workflows after 60 days without activity.
+#
+# Secrets required:
+#   DISCORD_WEBHOOK_URL   analyzers import config.settings, which requires it
+#                         (nothing is sent)
+#   SUPABASE_DB_URL       Supabase session-pooler connection string
 
 name: Daily report
 
@@ -36,21 +41,10 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Restore market database
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            tennis_scanner.db
-            tennis_scanner.db-wal
-            tennis_scanner.db-shm
-          key: db-report-${{ github.run_id }}
-          restore-keys: db-
-
       - name: Generate reports
         env:
-          # analyze_missed_waves.py imports config.settings, which requires
-          # the webhook at import time (no message is sent by the analyzers)
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: python run_daily_report.py
 
       - name: Commit reports
@@ -60,12 +54,3 @@ jobs:
           git add reports
           git diff --cached --quiet || git commit -m "Daily report $(date -u +%F)"
           git push
-
-      - name: Back up database
-        run: gzip -kf tennis_scanner.db
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: db-backup-${{ github.run_number }}
-          path: tennis_scanner.db.gz
-          retention-days: 30

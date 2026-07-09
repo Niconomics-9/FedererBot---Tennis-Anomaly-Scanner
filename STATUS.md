@@ -85,7 +85,8 @@ core/
   signal_engine.py           — 6 microstructure signals per snapshot
   pre_spike_engine.py        — conservative watch_score scoring
 alerts/discord_alerter.py    — webhook formatting
-storage/sqlite_storage.py    — tennis_scanner.db (4 tables, safe migrations)
+storage/supabase_storage.py  — Supabase Postgres (5 tables; storage/schema.sql)
+storage/report_db.py         — read-only access for the analyzer scripts
 ```
 
 ## Data being collected and scored
@@ -97,6 +98,29 @@ Every cycle, per market: probability, bid/ask, spread, volume, liquidity, veloci
 - Kalshi fetch makes many API calls (25 series × events × markets) paced at ~6.7 req/s to stay under Kalshi's ~10 req/s limit, so a Kalshi poll takes ~45 s of the cycle.
 - ~50/50 new matches produce no alert by design — alerts require low odds, movement, and quality gates.
 - First run after a DB reset is quieter than before because alerts require market classification and minimum history.
+
+## Recent changes (2026-07-09) — Supabase Postgres cutover completed
+
+Storage moved from a SQLite file juggled through the Actions cache to a
+Supabase Postgres project (`federerbot`, us-east-1) as the single durable
+store. The storage layer itself (`storage/supabase_storage.py`) and the
+schema migration (`federerbot_initial_schema`, applied) already existed;
+this change finished the cutover:
+
+- Analyzers (`analyze_alert_outcomes/pre_spike/missed_waves`,
+  `backtest_match_waves`) ported from sqlite to read-only Postgres via new
+  `storage/report_db.py` (timestamps normalised back to ISO strings so the
+  analysis logic is unchanged).
+- Verify scripts run against a disposable `verify_<hex>` Postgres schema
+  (new `storage/verify_env.py` + `SUPABASE_SCHEMA` setting) — they no longer
+  need a local db and can never touch live tables.
+- Workflows: cache restore/save and db backup-artifact steps removed; both
+  workflows now need the `SUPABASE_DB_URL` Actions secret (Session pooler
+  string — the direct db host is IPv6-only and unreachable from runners).
+- `.env.example` / SETUP_GITHUB.md updated accordingly.
+
+**Cutover checklist:** add the `SUPABASE_DB_URL` repo secret, then trigger
+the Scanner workflow manually and check both providers write snapshots.
 
 ## Recent changes (2026-06-12d) — PRE_SPIKE opened up to where waves live
 

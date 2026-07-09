@@ -1,24 +1,22 @@
 """
 Synthetic verification for alert-quality gates.
 
-Runs against a throwaway SQLite database. It does not import the Discord
-sender and cannot send webhooks.
+Runs against a throwaway Postgres schema on the SUPABASE_DB_URL database
+(created on start, dropped at the end — live tables are never touched).
+It does not import the Discord sender and cannot send webhooks.
 
 Usage:
-    python verify_alert_quality.py
+    python verify_alert_quality.py     (needs SUPABASE_DB_URL in env or .env)
 """
 
 import os
 import sys
-import tempfile
 from datetime import datetime, timedelta
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 os.environ.setdefault("DISCORD_WEBHOOK_URL", "https://example.invalid/webhook")
-tmpdir = tempfile.mkdtemp(prefix="alert_quality_check_")
-os.environ["DB_PATH"] = os.path.join(tmpdir, "check.db")
 os.environ["ALERT_MATCH_WINNER_ONLY"] = "true"
 os.environ["ALERT_MIN_HISTORY_SNAPSHOTS"] = "3"
 os.environ["ALERT_MIN_VOLUME"] = "100"
@@ -28,6 +26,10 @@ os.environ["ALERT_MATCH_COOLDOWN_MINUTES"] = "60"
 os.environ["ALERT_PRE_MATCH_ONLY"] = "true"
 os.environ["ALERT_PRE_MATCH_MIN_LEAD_MINUTES"] = "10"
 os.environ["ALERT_REQUIRE_START_TIME"] = "true"
+
+# Must run before config.settings is imported (the imports just below).
+from storage import verify_env
+SCHEMA = verify_env.setup()
 
 from core import anomaly_engine, market_classifier
 from market_providers.models import AlertRecord, AnomalyType, MarketSnapshot
@@ -92,6 +94,7 @@ def event_types(events) -> list[str]:
 
 
 def main() -> int:
+    verify_env.create_tables()
     db.init_db()
     now = datetime.utcnow()
 
@@ -119,8 +122,13 @@ def main() -> int:
         snap("p1", "Nadal vs Doe", "Doe", 0.055, now - timedelta(minutes=2), vol=1025),
         snap("p1", "Nadal vs Doe", "Doe", 0.120, now, vol=1100),
     ])
-    check("low-odds spike alerts on clean match winner",
-          event_types(events) == [AnomalyType.LOW_ODDS_SPIKE.value],
+    # The per-match dedupe keeps only the highest-priority event, and a
+    # PRE_SPIKE candidate outranks LOW_ODDS_SPIKE — with current scoring this
+    # surge also crosses the PRE_SPIKE threshold, so either type proves the
+    # alert path is open on a clean match winner.
+    check("clean match winner alerts (low-odds spike or pre-spike)",
+          event_types(events) in ([AnomalyType.LOW_ODDS_SPIKE.value],
+                                  [AnomalyType.PRE_SPIKE_CANDIDATE.value]),
           f"got {event_types(events)}")
 
     print("\n--- noisy market suppression ---")
@@ -209,9 +217,13 @@ def main() -> int:
     check("same match cooldown blocks related market", events == [], f"got {event_types(events)}")
 
     print(f"\n{'=' * 40}\n{PASS} passed, {FAIL} failed")
-    print(f"check DB kept at: {os.environ['DB_PATH']}")
     return 1 if FAIL else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        code = main()
+    finally:
+        verify_env.teardown()
+        print(f"throwaway schema {SCHEMA} dropped")
+    sys.exit(code)

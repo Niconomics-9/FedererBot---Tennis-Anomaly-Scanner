@@ -15,12 +15,10 @@ Reuses backtest_match_waves' labelling so "wave" means the same thing
 (+3 pp best entry->peak, entry >= 10 min pre-start). Read-only on the DB.
 
 Usage:
-    python analyze_missed_waves.py [path\\to\\tennis_scanner.db]
+    python analyze_missed_waves.py [postgres-connection-url]
+    (default: SUPABASE_DB_URL env var, or .env)
 """
 
-import json
-import os
-import sqlite3
 import statistics
 import sys
 from collections import defaultdict
@@ -30,6 +28,8 @@ import backtest_match_waves as bt
 from config import settings
 from core.market_classifier import MarketType, classify_market
 from datetime import datetime, timezone
+
+from storage.report_db import connect_readonly, rows
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -50,27 +50,26 @@ COMPONENT_MAX = {
 
 
 def main() -> int:
-    db_path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("DB_PATH", "tennis_scanner.db")
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    conn.row_factory = sqlite3.Row
+    conn = connect_readonly(sys.argv[1] if len(sys.argv) > 1 else None)
     now_iso = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
 
     alerts = bt._load_alerts(conn)
     scores = bt._load_scores(conn)
 
     snaps_by_series: dict[tuple, list] = {}
-    rows = conn.execute(
+    snap_rows = rows(
+        conn,
         """
         SELECT market_id, player_name, match_name, probability, timestamp,
                match_start_time, spread, volume_total
         FROM market_snapshots
         WHERE source = 'polymarket'
         ORDER BY market_id, player_name, timestamp
-        """
-    ).fetchall()
+        """,
+    )
 
     results = []
-    for (market_id, player_name), group in groupby(rows, key=lambda r: (r["market_id"], r["player_name"])):
+    for (market_id, player_name), group in groupby(snap_rows, key=lambda r: (r["market_id"], r["player_name"])):
         snaps = list(group)
         classification = classify_market(snaps[-1]["match_name"], player_name)
         if classification.market_type != MarketType.MATCH_WINNER:
@@ -95,15 +94,16 @@ def main() -> int:
 
     # full score rows (with components) per series
     def score_rows(mid, player, before_iso):
-        return conn.execute(
+        return rows(
+            conn,
             """
-            SELECT probability, total_score, components_json, created_at
+            SELECT probability, total_score, components, created_at
             FROM score_history
-            WHERE source='polymarket' AND market_id=? AND player_name=? AND created_at < ?
+            WHERE source='polymarket' AND market_id=%s AND player_name=%s AND created_at < %s
             ORDER BY created_at
             """,
             (mid, player, before_iso),
-        ).fetchall()
+        )
 
     buckets = defaultdict(list)
     deficits = defaultdict(list)   # component -> [pts at best eligible row]
@@ -127,7 +127,7 @@ def main() -> int:
         elif best_elig["total_score"] < THRESHOLD:
             mode = "score_too_low"
             best_scores.append(best_elig["total_score"])
-            for comp, pts in json.loads(best_elig["components_json"]).items():
+            for comp, pts in best_elig["components"].items():   # JSONB arrives parsed
                 deficits[comp].append(pts)
         else:
             mode = "gated_after_score"

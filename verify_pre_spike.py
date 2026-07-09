@@ -1,8 +1,9 @@
 """
 Synthetic end-to-end check of the PRE_SPIKE scoring engine.
 
-Runs against a throwaway SQLite database (no network, nothing sent to
-Discord) and verifies:
+Runs against a throwaway Postgres schema on the SUPABASE_DB_URL database
+(created on start, dropped at the end — live tables are never touched;
+nothing is sent to Discord) and verifies:
   1. A coiled low-odds market with rising pressure + Kalshi confirmation
      scores high, persists watch_score, and emits an urgent event.
   2. Breakdown components are complete and sum to the total.
@@ -10,14 +11,14 @@ Discord) and verifies:
   4. Out-of-band markets are scored but never alert.
   5. score_history records the breakdown (JSON round-trip) and prunes old rows.
 
-Usage:  python verify_pre_spike.py
+Usage:  python verify_pre_spike.py     (needs SUPABASE_DB_URL in env or .env)
 """
 
-import json
 import os
 import sys
-import tempfile
 from datetime import datetime, timedelta
+
+from psycopg2.extras import RealDictCursor
 
 # Windows consoles may default to cp1252, which cannot print alert emoji.
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -25,8 +26,13 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 # Must be set before config.settings is imported.
 os.environ.setdefault("DISCORD_WEBHOOK_URL", "https://example.invalid/webhook")
-_tmpdir = tempfile.mkdtemp(prefix="pre_spike_check_")
-os.environ["DB_PATH"] = os.path.join(_tmpdir, "check.db")
+# Pin the thresholds this script's scenarios were designed around (the live
+# defaults are tuned over time): the synthetic 74-score cycle must be a
+# STANDARD alert here — urgent escalation is exercised explicitly below.
+os.environ["PRE_SPIKE_ALERT_SCORE"] = "70"
+os.environ["PRE_SPIKE_URGENT_SCORE"] = "80"
+from storage import verify_env
+SCHEMA = verify_env.setup()
 
 import logging
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)-7s %(name)s | %(message)s")
@@ -74,6 +80,7 @@ def pre_spike_events(events):
 
 
 def main() -> int:
+    verify_env.create_tables()
     db.init_db()
     now = datetime.utcnow()
 
@@ -107,8 +114,8 @@ def main() -> int:
           f"events={[(e.anomaly_type.value, getattr(e, 'urgent', None)) for e in events]}")
     if ps:
         ev = ps[0]
-        check("score is 73 (42 pressure + 25 band setup + 6 kalshi + 0 external)",
-              ev.watch_score == 73.0, f"got {ev.watch_score}")
+        check("score is 74 (42 pressure + 25 band setup + 6 kalshi + 1 external)",
+              ev.watch_score == 74.0, f"got {ev.watch_score}")
         check("breakdown sums to total",
               abs(sum(ev.score_breakdown.values()) - ev.watch_score) < 1e-6)
         expected_keys = {
@@ -125,7 +132,9 @@ def main() -> int:
         check("in-band membership earns only 5 points",
               ev.score_breakdown["low_odds.in_band"] == 5.0,
               f"got {ev.score_breakdown['low_odds.in_band']}")
-        check("external stub contributes 0", ev.score_breakdown["external.momentum"] == 0.0)
+        check("external momentum contributes 1 (sustained drift + volume trend)",
+              ev.score_breakdown["external.momentum"] == 1.0,
+              f"got {ev.score_breakdown['external.momentum']}")
         check("kalshi confirmation scored 6",
               ev.score_breakdown["cross.kalshi_confirmation"] == 6.0)
 
@@ -137,21 +146,22 @@ def main() -> int:
 
     signals = db.get_signals("p1", "Doe J.", "polymarket")
     check("watch_score persisted to market_signals",
-          signals is not None and signals.watch_score == 73.0,
+          signals is not None and signals.watch_score == 74.0,
           f"got {signals.watch_score if signals else None}")
     check("volume_acceleration filled in (50 - 10 = 40)",
           signals is not None and signals.volume_acceleration == 40.0,
           f"got {signals.volume_acceleration if signals else None}")
 
-    with db._connect() as conn:
-        hist = conn.execute(
-            "SELECT * FROM score_history WHERE market_id = 'p1' AND total_score = 73.0"
-        ).fetchall()
-    check("score_history row recorded for the 73-score cycle", len(hist) == 1,
+    with db._connect() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute(
+            "SELECT * FROM score_history WHERE market_id = 'p1' AND total_score = 74.0"
+        )
+        hist = cur.fetchall()
+    check("score_history row recorded for the 74-score cycle", len(hist) == 1,
           f"got {len(hist)} rows")
     if hist and ps:
         check("history components JSON round-trips to the event breakdown",
-              json.loads(hist[0]["components_json"]) == ps[0].score_breakdown)
+              hist[0]["components"] == ps[0].score_breakdown)
 
     # ── cooldown: record the standard alert, next qualifying cycle is silent ──
     print("\n--- cooldown after standard alert ---")
@@ -170,8 +180,8 @@ def main() -> int:
 
     # ── cooldown matrix: standard blocks standard, allows urgent escalation ───
     print("\n--- cooldown matrix (standard -> urgent escalation) ---")
-    with db._connect() as conn:
-        conn.execute("DELETE FROM alerts_sent")
+    with db._connect() as conn, conn.cursor() as cur:
+        cur.execute("DELETE FROM alerts_sent")
     db.save_alert(AlertRecord("p1", "Doe J.", "polymarket",
                               AnomalyType.PRE_SPIKE_CANDIDATE.value, 0.035, 0.045))
     probe = snap("p1", "Nadal vs Doe", "Doe J.", 0.05, "polymarket", now)
@@ -203,18 +213,22 @@ def main() -> int:
     db.save_score_history("old1", "Stale P.", "polymarket", 0.05, 33.0,
                           {"low_odds.in_band": 15.0}, now - timedelta(days=30))
     db.prune_score_history(14)
-    with db._connect() as conn:
-        old = conn.execute(
-            "SELECT COUNT(*) AS c FROM score_history WHERE market_id = 'old1'"
-        ).fetchone()["c"]
-        fresh = conn.execute("SELECT COUNT(*) AS c FROM score_history").fetchone()["c"]
+    with db._connect() as conn, conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT COUNT(*) AS c FROM score_history WHERE market_id = 'old1'")
+        old = cur.fetchone()["c"]
+        cur.execute("SELECT COUNT(*) AS c FROM score_history")
+        fresh = cur.fetchone()["c"]
     check("prune removed the 30-day-old row", old == 0, f"got {old}")
     check("prune kept fresh rows", fresh > 0, f"got {fresh}")
 
     print(f"\n{'=' * 40}\n{PASS} passed, {FAIL} failed")
-    print(f"check DB kept at: {os.environ['DB_PATH']}")
     return 1 if FAIL else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        code = main()
+    finally:
+        verify_env.teardown()
+        print(f"throwaway schema {SCHEMA} dropped")
+    sys.exit(code)

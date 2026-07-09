@@ -25,18 +25,17 @@ Output
 2. reports\\match_waves_YYYY-MM-DD.csv — one labelled row per series: the
    per-match "would it have worked" dataset (keeps the most recent 30 files).
 
-Read-only on the database (sqlite mode=ro); needs no .env. The only project
-import is core.market_classifier (pure stdlib), so match-winner filtering
-matches the live scanner exactly instead of drifting.
+Read-only on the database (default_transaction_read_only=on — this script
+can never write). The only other project import is core.market_classifier
+(pure stdlib), so match-winner filtering matches the live scanner exactly
+instead of drifting.
 
 Usage:
-    python backtest_match_waves.py [path\\to\\tennis_scanner.db]
-    (default: DB_PATH env var, else tennis_scanner.db in the cwd)
+    python backtest_match_waves.py [postgres-connection-url]
+    (default: SUPABASE_DB_URL env var, or .env)
 """
 
 import csv
-import os
-import sqlite3
 import statistics
 import sys
 from datetime import datetime, timedelta, timezone
@@ -44,6 +43,7 @@ from itertools import groupby
 from pathlib import Path
 
 from core.market_classifier import MarketType, classify_market
+from storage.report_db import connect_readonly, one, rows
 
 # Windows consoles may default to cp1252, which cannot print the dividers.
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -79,13 +79,7 @@ CSV_FIELDS = [
 
 
 def main() -> int:
-    db_path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("DB_PATH", "tennis_scanner.db")
-    if not os.path.exists(db_path):
-        print(f"Database not found: {db_path}")
-        return 1
-
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    conn.row_factory = sqlite3.Row
+    conn = connect_readonly(sys.argv[1] if len(sys.argv) > 1 else None)
     now_iso = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
 
     _print_inventory(conn)
@@ -93,20 +87,21 @@ def main() -> int:
     alerts = _load_alerts(conn)
     scores = _load_scores(conn)
 
-    rows = conn.execute(
+    snap_rows = rows(
+        conn,
         """
         SELECT market_id, player_name, match_name, probability, timestamp,
                match_start_time, spread, volume_total
         FROM market_snapshots
         WHERE source = 'polymarket'
         ORDER BY market_id, player_name, timestamp
-        """
-    ).fetchall()
+        """,
+    )
 
     skipped = {"not_match_winner": 0, "no_start_time": 0}
     results: list[dict] = []
     for (market_id, player_name), group in groupby(
-        rows, key=lambda r: (r["market_id"], r["player_name"])
+        snap_rows, key=lambda r: (r["market_id"], r["player_name"])
     ):
         snaps = list(group)
         classification = classify_market(snaps[-1]["match_name"], player_name)
@@ -138,14 +133,15 @@ def main() -> int:
 
 # ── data loading ──────────────────────────────────────────────────────────────
 
-def _load_alerts(conn: sqlite3.Connection) -> dict[tuple, list]:
+def _load_alerts(conn) -> dict[tuple, list]:
     """(market_id, player_name) -> [(sent_at, anomaly_type), ...] sorted."""
     out: dict[tuple, list] = {}
-    for r in conn.execute(
+    for r in rows(
+        conn,
         """
         SELECT market_id, player_name, anomaly_type, sent_at
         FROM alerts_sent WHERE source = 'polymarket' ORDER BY sent_at
-        """
+        """,
     ):
         out.setdefault((r["market_id"], r["player_name"]), []).append(
             (r["sent_at"], r["anomaly_type"])
@@ -153,14 +149,15 @@ def _load_alerts(conn: sqlite3.Connection) -> dict[tuple, list]:
     return out
 
 
-def _load_scores(conn: sqlite3.Connection) -> dict[tuple, list]:
+def _load_scores(conn) -> dict[tuple, list]:
     """(market_id, player_name) -> [(created_at, total_score), ...] sorted."""
     out: dict[tuple, list] = {}
-    for r in conn.execute(
+    for r in rows(
+        conn,
         """
         SELECT market_id, player_name, total_score, created_at
         FROM score_history WHERE source = 'polymarket' ORDER BY created_at
-        """
+        """,
     ):
         out.setdefault((r["market_id"], r["player_name"]), []).append(
             (r["created_at"], r["total_score"])
@@ -173,7 +170,7 @@ def _load_scores(conn: sqlite3.Connection) -> dict[tuple, list]:
 def _evaluate_series(
     market_id: str,
     player_name: str,
-    snaps: list[sqlite3.Row],
+    snaps: list[dict],
     start_iso: str,
     now_iso: str,
     match_key: str,
@@ -248,7 +245,7 @@ def _evaluate_series(
     return row
 
 
-def _best_wave(pre: list[sqlite3.Row], start_dt: datetime) -> tuple[int, int, float] | None:
+def _best_wave(pre: list[dict], start_dt: datetime) -> tuple[int, int, float] | None:
     """
     (entry_index, peak_index, wave) maximising forward rise. Entry needs
     >= MIN_LEAD_MINUTES before start; the peak may be any later pre-match
@@ -321,25 +318,24 @@ def _write_csv(results: list[dict]) -> Path:
     return path
 
 
-def _print_inventory(conn: sqlite3.Connection) -> None:
-    lo, hi = conn.execute("SELECT MIN(timestamp), MAX(timestamp) FROM market_snapshots").fetchone()
+def _print_inventory(conn) -> None:
+    span = one(conn, "SELECT MIN(timestamp) AS lo, MAX(timestamp) AS hi FROM market_snapshots")
     print(f"\n{'=' * 86}")
-    print(f"Saved data inventory — snapshots from {lo} to {hi} (UTC)")
+    print(f"Saved data inventory — snapshots from {span['lo']} to {span['hi']} (UTC)")
     print(f"{'=' * 86}")
     print(f"{'source':<12} {'snapshots':>10} {'matches':>8} {'series':>8}")
-    for r in conn.execute(
+    for r in rows(
+        conn,
         """
         SELECT source, COUNT(*) AS n, COUNT(DISTINCT match_name) AS matches,
                COUNT(DISTINCT market_id || '|' || player_name) AS series
         FROM market_snapshots GROUP BY source ORDER BY n DESC
-        """
+        """,
     ):
         print(f"{r['source']:<12} {r['n']:>10,} {r['matches']:>8,} {r['series']:>8,}")
-    alerts = conn.execute(
-        "SELECT COUNT(*), COUNT(DISTINCT anomaly_type) FROM alerts_sent"
-    ).fetchone()
-    scores = conn.execute("SELECT COUNT(*) FROM score_history").fetchone()[0]
-    print(f"alerts sent: {alerts[0]}  |  score_history rows: {scores:,}")
+    alerts = one(conn, "SELECT COUNT(*) AS n FROM alerts_sent")
+    scores = one(conn, "SELECT COUNT(*) AS n FROM score_history")
+    print(f"alerts sent: {alerts['n']}  |  score_history rows: {scores['n']:,}")
 
 
 def _print_summary(results: list[dict], skipped: dict, csv_path: Path) -> None:

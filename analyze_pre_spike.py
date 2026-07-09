@@ -12,22 +12,21 @@ Report sections
 2. Component signal: average points per component among hits vs misses —
    shows which components actually separate the two when tuning.
 
-Standalone on purpose: opens the database read-only via sqlite URI and does
-not import project modules, so it needs no .env and can never write.
+Read-only on purpose: the connection is opened with
+default_transaction_read_only=on, so this script can never write.
 
 Usage:
-    python analyze_pre_spike.py [path\\to\\tennis_scanner.db]
-    (default: DB_PATH env var, else tennis_scanner.db in the cwd)
+    python analyze_pre_spike.py [postgres-connection-url]
+    (default: SUPABASE_DB_URL env var, or .env)
 """
 
-import json
-import os
-import sqlite3
 import statistics
 import sys
 from bisect import bisect_right
 from collections import defaultdict
 from datetime import datetime, timedelta
+
+from storage.report_db import connect_readonly, rows
 
 # Windows consoles may default to cp1252, which cannot print the dividers.
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -38,45 +37,41 @@ BUCKETS = [(0, 40), (40, 55), (55, 70), (70, 85), (85, 100.01)]
 
 
 def main() -> int:
-    db_path = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("DB_PATH", "tennis_scanner.db")
-    if not os.path.exists(db_path):
-        print(f"Database not found: {db_path}")
-        return 1
+    conn = connect_readonly(sys.argv[1] if len(sys.argv) > 1 else None)
 
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    conn.row_factory = sqlite3.Row
-
-    history = conn.execute(
-        "SELECT * FROM score_history ORDER BY market_id, player_name, source, created_at"
-    ).fetchall()
+    history = rows(
+        conn,
+        "SELECT * FROM score_history ORDER BY market_id, player_name, source, created_at",
+    )
     if not history:
         print("score_history is empty — let the scanner run first.")
         return 0
 
     # Group history rows per market so each market's snapshots load only once.
-    groups: dict[tuple, list[sqlite3.Row]] = defaultdict(list)
+    groups: dict[tuple, list[dict]] = defaultdict(list)
     for row in history:
         groups[(row["market_id"], row["player_name"], row["source"])].append(row)
 
     now_iso = datetime.utcnow().isoformat()
     results: list[dict] = []
-    for key, rows in groups.items():
-        snaps = conn.execute(
+    for key, group_rows in groups.items():
+        snaps = rows(
+            conn,
             """
             SELECT probability, timestamp FROM market_snapshots
-            WHERE market_id = ? AND player_name = ? AND source = ?
+            WHERE market_id = %s AND player_name = %s AND source = %s
             ORDER BY timestamp
             """,
             key,
-        ).fetchall()
+        )
         timestamps = [s["timestamp"] for s in snaps]
         probs = [s["probability"] for s in snaps]
 
-        for row in rows:
+        for row in group_rows:
             t0 = row["created_at"]
             entry = {
                 "score": row["total_score"],
-                "components": json.loads(row["components_json"]),
+                "components": row["components"],   # JSONB arrives parsed
             }
             for window in WINDOWS_MIN:
                 t_end = (datetime.fromisoformat(t0) + timedelta(minutes=window)).isoformat()
