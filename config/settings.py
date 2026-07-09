@@ -11,7 +11,7 @@ try:
     from dotenv import load_dotenv
 except ModuleNotFoundError:
     def load_dotenv(*args, **kwargs):
-        return Falseh
+        return False
 
 load_dotenv()
 
@@ -48,6 +48,11 @@ def _bool(key: str, default: bool) -> bool:
 # ── Required ──────────────────────────────────────────────────────────────────
 
 DISCORD_WEBHOOK_URL: str = _require("DISCORD_WEBHOOK_URL")
+
+# Supabase Postgres connection string (Session mode, port 5432).
+# Dashboard -> Settings -> Database -> Connection string.
+# Required: the bot fails loudly at startup if missing.
+SUPABASE_DB_URL: str = _require("SUPABASE_DB_URL")
 
 # ── Provider API keys (optional per-provider) ─────────────────────────────────
 
