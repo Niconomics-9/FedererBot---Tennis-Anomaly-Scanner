@@ -13,7 +13,7 @@ import requests
 from config import settings
 from core import market_classifier
 from market_providers.models import AlertRecord, AnomalyEvent, AnomalyType
-from storage import sqlite_storage as db
+from storage import supabase_storage as db
 
 logger = logging.getLogger(__name__)
 
