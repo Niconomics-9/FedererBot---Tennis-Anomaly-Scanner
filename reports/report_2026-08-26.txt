@@ -1,4 +1,4 @@
-TennisBot daily report — generated 2026-07-27 07:39 (local)
+TennisBot daily report — generated 2026-08-26 04:47 (local)
 
 ##############################################################################
 # analyze_alert_outcomes.py
@@ -138,7 +138,7 @@ threshold   fired   hit  precision   recall
 >= 60          12     5     41.7%    1.0%
 >= 45         519   247     47.6%   48.2%
 
-Per-series dataset written to /home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/reports/match_waves_2026-07-27.csv
+Per-series dataset written to /home/runner/work/FedererBot---Tennis-Anomaly-Scanner/FedererBot---Tennis-Anomaly-Scanner/reports/match_waves_2026-08-26.csv
 
 ##############################################################################
 # analyze_missed_waves.py
